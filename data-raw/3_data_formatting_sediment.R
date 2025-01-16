@@ -1,4 +1,9 @@
-### Data formatting sediment
+####################################
+##         PROJET CHOPIN
+##
+##    MISE EN FORME DES DONNEES
+##           SEDIMENTS
+####################################
 
 
 # Loadings

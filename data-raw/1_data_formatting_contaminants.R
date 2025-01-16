@@ -1,4 +1,9 @@
-## Data formatting - Contaminants
+####################################
+##         PROJET CHOPIN
+##
+##    MISE EN FORME DES DONNEES
+##      LISTE DES CONTAMINANTS
+####################################
 
 
 # Loadings
@@ -61,7 +66,18 @@ n_C_ALL <- wrangle_contam(grp_contam = "PFAS", grp_type = "family", out_var = "n
 ## LogKow within PCBs
 log_Kow <- wrangle_contam(grp_contam = "PCB", grp_type = "family", out_var = "logKow")
 
+#-----------------------------------------------------------
+# Suppression des composes non analyses dans le biote
 
+PFAS = PFAS_ALL[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
+PFAS_lab = PFAS_ALL_lab[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
+sub_family = sub_family_ALL[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
+n_C = n_C_ALL[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
+
+FOSAs = FOSAs_ALL[-which(FOSAs_ALL=="MeFOSA"|FOSAs_ALL=="EtFOSA")]
+FOSAs_lab = FOSAs_ALL_lab[-which(FOSAs_ALL_lab=="MeFOSA"|FOSAs_ALL_lab=="EtFOSA")]
+
+#-----------------------------------------------------------
 # Output data
 
 usethis::use_data(contam, overwrite = TRUE)
@@ -93,3 +109,10 @@ usethis::use_data(other_PFAS_lab, overwrite = TRUE)
 
 usethis::use_data(n_C_ALL, overwrite = TRUE)
 usethis::use_data(log_Kow, overwrite = TRUE)
+
+usethis::use_data(PFAS, overwrite = TRUE)
+usethis::use_data(PFAS_lab, overwrite = TRUE)
+usethis::use_data(sub_family, overwrite = TRUE)
+usethis::use_data(n_C, overwrite = TRUE)
+usethis::use_data(FOSAs, overwrite = TRUE)
+usethis::use_data(FOSAs_lab, overwrite = TRUE)

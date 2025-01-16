@@ -1,5 +1,9 @@
-## Data_formatting_benthos
-
+####################################
+##         PROJET CHOPIN
+##
+##    MISE EN FORME DES DONNEES
+##           BENTHOS
+####################################
 
 # Loadings
 
@@ -21,17 +25,6 @@ benthos_contam = read_excel(here("data-raw/CHOPIN_BASE_DE_DONNEES_GENERALE.xlsx"
 
 benthos_contam$zone = as.factor(benthos_contam$zone)
 benthos_contam$species = as.factor(benthos_contam$species)
-
-
-# Suppression des composes non analyses (le cas echeant)
-
-PFAS = PFAS_ALL[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
-PFAS_lab = PFAS_ALL_lab[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
-sub_family = sub_family_ALL[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
-n_C = n_C_ALL[-which(PFAS_ALL=="MeFOSA"|PFAS_ALL=="EtFOSA")]
-
-FOSAs = FOSAs_ALL[-which(FOSAs_ALL=="MeFOSA"|FOSAs_ALL=="EtFOSA")]
-FOSAs_lab = FOSAs_ALL_lab[-which(FOSAs_ALL_lab=="MeFOSA"|FOSAs_ALL_lab=="EtFOSA")]
 
 
 # Remplacement des valeurs <LOD/LOQ par 0 pour les HBCDD
@@ -169,11 +162,3 @@ usethis::use_data(benthos_contam_oct, overwrite = TRUE)
 usethis::use_data(alim, overwrite = TRUE)
 usethis::use_data(labels, overwrite = TRUE)
 usethis::use_data(taxons, overwrite = TRUE)
-
-# usethis::use_data(PFAS, overwrite = TRUE)
-# usethis::use_data(PFAS_lab, overwrite = TRUE)
-# usethis::use_data(sub_family, overwrite = TRUE)
-# usethis::use_data(n_C, overwrite = TRUE)
-# usethis::use_data(FOSAs, overwrite = TRUE)
-# usethis::use_data(FOSAs_lab, overwrite = TRUE)
-
