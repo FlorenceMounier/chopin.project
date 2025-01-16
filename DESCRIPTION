@@ -1,0 +1,12 @@
+Package: chopin.project
+Type: Package
+Title: CHOPIN project: data, scripts and outputs
+Version: 0.1.0
+Author: Florence Mounier
+Maintainer: Florence Mounier <florence.mounier42@gmail.com>
+Description: Contaminants organoHalogénés histOriques et d’intérêt émergent
+    Présence et transfert vers la sole commune
+    Impact de la contamination sur la Nourricerie et conséquences sur la population
+License: MIT
+Encoding: UTF-8
+LazyData: true
