@@ -1,0 +1,289 @@
+---
+title: "sediment - mecanistic"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "Sediment - ACP"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Loadings
+
+## Load packages
+
+```{r packages, message = FALSE}
+library(tidyverse)
+library(here)
+
+library(readxl)
+library(readr) # write .csv
+library(parzer) # read GPS coordinates
+
+library(nlme)
+library(lmerTest)
+
+# ACP
+library("FactoMineR")
+library("factoextra")
+library("missMDA")
+
+# graphics
+library(ggplot2)
+library(gridExtra)
+library(RColorBrewer)
+```
+
+## Load contaminant lists and labels
+```{r}
+sed_contam <- read_csv(file = here("data/sed_contam.csv"))
+```
+
+
+
+#--------------
+# Create a table of data for sediment:
+
+sediment = select(.data = sed_contam,
+                      lat, lon,
+                      site,
+                      year,
+                      zone_publi,
+                      season,
+                      `X<63`,
+                      `Ctot_mg_g-1`,
+                      `C/N_mol`,
+                      "a-HBCDD":"HFPO-DA")
+
+sediment$year = as.factor(sediment$year)
+
+# get coordinates in a usable format for graphics
+sediment$lat = parzer::parse_lat(lat = sediment$lat)
+sediment$lon = parzer::parse_lon(lon = sediment$lon)
+
+# add an upstream point for dist reference
+sediment = mutate(sediment,
+                    dist = round(distGeo(p1 = cbind(lon, lat),
+                                         p2 = c(0.28, 49.437))/1000, digits = 1))
+
+# translate seasons
+sediment$season = factor(sediment$season, 
+                           labels = c("Spring",
+                                      "Autumn"),
+                           levels = c("Printemps",
+                                      "Automne"))
+
+# add a campaign column
+sediment = mutate(sediment,
+                    campaign = paste(season, year))
+
+sediment_PCB = select(.data = sediment,
+                      -c("PFPeA":"HFPO-DA"),
+                      -c("a-HBCDD":"g-HBCDD"))
+
+sediment_PFAS = select(.data = sediment,
+                      -c("CB28":"CB194"),
+                      -c("a-HBCDD":"g-HBCDD"))
+
+sediment_HBCDD = select(.data = sediment,
+                       -c("CB28":"CB194"),
+                       -c("PFPeA":"HFPO-DA"))
+
+
+
+# change table structure for grain size: add a column "grain size" with factor values = `X<63`:`1000<X<2000`
+sediment_L = pivot_longer(sediment,
+                          cols = "CB28":"HFPO-DA",
+                          names_to = "Contam_TAG",
+                          values_to = "Contam_ng.gdw")
+
+sediment_L$Contam_TAG = as.factor(sediment_L$Contam_TAG)
+
+sediment_PCB_L = pivot_longer(sediment_PCB,
+                          cols = "CB28":"CB194",
+                          names_to = "Contam_TAG",
+                          values_to = "Contam_ng.gdw")
+
+sediment_PCB_L$Contam_TAG = as.factor(sediment_PCB_L$Contam_TAG)
+
+#-----------------------
+
+# res.comp = imputeFAMD(ACP_benthos, ncp=5)
+# res.famd = FAMD(res.comp$completeObs)
+res.comp = imputeFAMD(X = as.data.frame(sediment_PCB_L[,-c(1:4)]), ncp = 3)
+res.famd = FAMD(res.comp$completeObs)
+
+summary(res.famd)
+
+
+fviz_screeplot(res.pca)
+
+fviz_pca_var(res.pca, col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel=T
+)
+fviz_pca_var(res.pca, col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel=T, axes = c(2,3)
+)
+
+#-----------------------
+# Fine-sand grain portion => *** ###
+glm_sed_grain <- glm(Contam_ng.gdw ~ `X<63`, data = sediment_L)
+summary(glm_sed_grain) # 4.92e-10 ***
+glm_sed_grain_PCB <- glm(Contam_ng.gdw ~ `X<63`, data = sediment_PCB_L)
+summary(glm_sed_grain_PCB) # 3.3e-16 ***
+ggplot(sediment_PCB_L) +
+  aes(y=Contam_ng.gdw, x= `X<63`, col=Contam_TAG) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha=0.1)
+
+
+#-----------------------
+# TOC => 0.24 
+glm_sed_TOC <- glm(Contam_ng.gdw ~ `Ctot_mg_g-1`, data = sediment_L)
+summary(glm_sed_TOC)
+glm_sed_TOC_PCB <- glm(Contam_ng.gdw ~ `Ctot_mg_g-1`, data = sediment_PCB_L)
+summary(glm_sed_TOC_PCB) # 3.3e-16 ***
+ggplot(sediment_PCB_L) +
+  aes(y=Contam_ng.gdw, x= `Ctot_mg_g-1`, col=Contam_TAG) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha=0.1)
+
+#-----------------------
+# C/N => 0.0802
+glm_sed_CoverN <- glm(Contam_ng.gdw ~ `C/N_mol`, data = sediment_L)
+summary(glm_sed_CoverN)
+glm_sed_CoverN_PCB <- glm(Contam_ng.gdw ~ `C/N_mol`, data = sediment_PCB_L)
+summary(glm_sed_CoverN_PCB) # 3.3e-16 ***
+ggplot(sediment_PCB_L) +
+  aes(y=Contam_ng.gdw, x= `C/N_mol`, col=Contam_TAG) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha=0.1)
+
+#-----------------------
+# Season => 0.00186 ** ###
+glm_sed_season <- glm(Contam_ng.gdw ~ season, data = sediment_L)
+summary(glm_sed_season)
+glm_sed_season_PCB <- glm(Contam_ng.gdw ~ `season`, data = sediment_PCB_L)
+summary(glm_sed_season_PCB) # 3.3e-16 ***
+ggplot(sediment_PCB_L) +
+  aes(y=Contam_ng.gdw, x= `season`, col=Contam_TAG) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha=0.1)
+
+#-----------------------
+# Distance to upstream => 0.409
+glm_sed_dist <- glm(Contam_ng.gdw ~ dist, data = sediment_L)
+summary(glm_sed_dist)
+glm_sed_dist_PCB <- glm(Contam_ng.gdw ~ `dist`, data = sediment_PCB_L)
+summary(glm_sed_dist_PCB) # 3.3e-16 ***
+ggplot(sediment_PCB_L) +
+  aes(y=Contam_ng.gdw, x= `dist`, col=Contam_TAG) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha=0.1)
+
+#-----------------------
+# Bank => 0.00175 ** ###
+glm_sed_bank <- glm(Contam_ng.gdw ~ zone_publi, data = sediment_L)
+summary(glm_sed_bank)
+glm_sed_bank_PCB <- glm(Contam_ng.gdw ~ `zone_publi`, data = sediment_PCB_L)
+summary(glm_sed_bank_PCB) # 3.3e-16 ***
+ggplot(sediment_PCB_L) +
+  aes(y=Contam_ng.gdw, x= `zone_publi`, col=Contam_TAG) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha=0.1)
+
+
+#############################
+
+ggplot(sediment_L) +
+  aes(x = `X<63`,
+      y = Contam_ng_g.1Corg,
+      col = Contam_TAG) +
+  geom_smooth()
+
+##########################
+# random effect on interecpt only
+
+gD=groupedData(data = sediment_L, Contam_ng_g.1Corg~`X<63`|Contam_TAG,
+               labels=list(x="X<63",y="Contamination"),
+               units=list(x="%",y="ng_g.1Corg"))
+
+plot(gD, outer=~1, key = list(lines=F), strip = F, aspect = 1)
+
+sed_L = na.omit(sediment_L)
+sed_L = rename(sed_L, fine_grain = `X<63`)
+
+lme_tmp = lme(Contam_ng_g.1Corg ~ fine_grain, random = ~ 1|Contam_TAG, data = sed_L)
+summary(lme_tmp)
+plot(lme_tmp)
+
+lme_tmp2 = lme(Contam_ng_g.1Corg ~ fine_grain + season, random = ~ 1|Contam_TAG, data = sed_L)
+summary(lme_tmp2)
+plot(lme_tmp2)
+
+lme_tmp3 = lme(Contam_ng_g.1Corg ~ fine_grain + season + zone_publi, random = ~ 1|Contam_TAG, data = sed_L)
+summary(lme_tmp3)
+plot(lme_tmp3)
+
+pdSymm(
+
+##########################
+# random effect on interecept and slopes
+lmer_tmp = lmer(Contam_ng_g.1Corg ~ fine_grain + (1|Contam_TAG), data = sed_L)
+summary(lmer_tmp)
+
+lmer_tmp2 = lmer(Contam_ng_g.1Corg ~ fine_grain + season + (season|Contam_TAG), data = sed_L)
+summary(lmer_tmp2)
+
+lmer_tmp3 = lmer(Contam_ng_g.1Corg ~ fine_grain + season + zone_publi + 
+                   (1+season|Contam_TAG) + (1+zone_publi|Contam_TAG), data = sed_L)
+summary(lmer_tmp3)
+
+
+##########################
+glm_sed <- glm(Contam_ng_g.1Corg ~ `X<63` + season + zone_publi, data = sediment_L)
+summary(glm_sed)
+plot(glm_sed)
+
+
+lme_sed <- lmer(Contam_ng_g.1Corg ~ `X<63` + season + zone_publi +
+                 (1 + `X<63` | Contam_TAG) +
+                 (1 + `season` | Contam_TAG) +
+                 (1 + `zone_publi` | Contam_TAG),
+                 data = sediment_L)
+summ_lme_sed <-  summary(lme_sed)
+
+
+
+
+plot(benthos_contam$lip_PS_percent, benthos_contam$sommePCB_ng_gdw,
+     ylab = "Somme des PCB (ng.g-1 ps)",
+     xlab = "Taux de lipides (% ps)")
+lm1 = lm(benthos_contam$sommePCB_ng_gdw ~ benthos_contam$lip_PS_percent)
+if(summary(lm1)$coef[2,4]<0.05){
+  abline(lm1)
+}
+
+
+
+
+
+plot(benthos_contam$lip_PS_percent, benthos_contam$sommeHBCDD_ng_gdw,
+     ylab = "Somme des HBCDD (ng.g-1 ps)",
+     xlab = "Taux de lipides (% ps)")
+lm2 = lm(benthos_contam$sommeHBCDD_ng_gdw ~benthos_contam$lip_PS_percent)
+summary(lm2)
+if(summary(lm2)$coef[2,4]<0.05){
+  abline(lm2)
+}

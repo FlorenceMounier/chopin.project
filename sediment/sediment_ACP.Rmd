@@ -1,0 +1,41 @@
+---
+title: "Sediment - ACP"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Loadings
+
+## Load packages
+
+```{r packages, message = FALSE}
+library(tidyverse)
+library(here)
+
+library(readxl)
+library(readr) # write .csv
+library(parzer) # read GPS coordinates
+
+library(nlme)
+library(lmerTest)
+
+# ACP
+library("FactoMineR")
+library("factoextra")
+library("missMDA")
+
+# graphics
+library(ggplot2)
+library(gridExtra)
+library(RColorBrewer)
+```
+
+## Load contaminant lists and labels
+```{r}
+sed_contam <- read_csv(file = here("data/sed_contam.csv"))
+```
+

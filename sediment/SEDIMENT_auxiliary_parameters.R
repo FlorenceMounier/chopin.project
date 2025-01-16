@@ -1,0 +1,192 @@
+
+
+#--------------
+# Loadings
+
+# Packages
+library(tidyverse)
+library(readxl) # read .xlsx
+library(readr) # write .csv
+library(parzer) # read GPS coordinates
+library(ggplot2) # graphics
+library(geosphere) # seine map
+
+# Formatted data
+source("Script/DATA_FORMATTING/CHOPIN_DATA_FORMATTING_MAIN.R")
+
+#--------------
+# Grain size
+
+# Create a table of data for grain size:
+grain_size = select(.data = sed_contam,
+                    lat, lon,
+                    site,
+                    year,
+                    zone_publi,
+                    season,
+                    `X<63`:`1000<X<2000`,
+                    `Ctot_mg_g-1`,
+                    `C/N_mol`)
+
+grain_size$year = as.factor(grain_size$year)
+
+# get coordinates in a usable format for graphics
+grain_size$lat = parzer::parse_lat(lat = grain_size$lat)
+grain_size$lon = parzer::parse_lon(lon = grain_size$lon)
+
+# add an upstream point for dist reference
+grain_size = mutate(grain_size,
+                    dist = round(distGeo(p1 = cbind(lon, lat),
+                                         p2 = c(0.28, 49.437))/1000, digits = 1))
+
+# translate seasons
+grain_size$season = factor(grain_size$season, 
+                           labels = c("Spring",
+                                      "Autumn"),
+                           levels = c("Printemps",
+                                      "Automne"))
+
+# add a campaign column
+grain_size = mutate(grain_size,
+                    campaign = paste(season, year))
+
+# sort "site" factorial values 
+grain_size$site = factor(grain_size$site,
+                           levels = c("FS19",
+                                      "FS59",
+                                      "EM47",
+                                      "EM52",
+                                      "FNR8",
+                                      "FN8",
+                                      "FN14",
+                                      "EM29")
+)
+
+ggplot(grain_size) +
+  aes(x = dist,
+           y= `X<63`,
+           color = zone_publi,
+           shape = year) +
+  geom_point() +
+  facet_grid(rows = vars(season))
+
+ggplot(grain_size) +
+  aes(x = dist,
+      y= `X<63`,
+      color = zone_publi,
+      shape = c(year)) +
+  geom_point() +
+  geom_smooth() +
+  facet_grid(rows = vars(season))
+
+ggplot(grain_size) +
+  aes(x = dist,
+      y= `X<63`,
+      color = zone_publi,
+      shape = campaign) +
+  geom_point() +
+  geom_line()
+
+
+ggplot(grain_size) +
+  aes(x = -dist,
+      y= `X<63`,
+      color = campaign,
+      shape = zone_publi,
+      linetype = zone_publi) +
+  geom_point(size=2) +
+  geom_line()
+
+
+ggplot(grain_size) +
+  aes(x = -dist,
+      y= `X<63`,
+      color = campaign,
+      shape = zone_publi,
+      linetype = zone_publi) +
+  geom_smooth(size=2) 
+
+ggplot(grain_size) +
+  aes(x = -dist,
+      y= `X<63`) +
+  geom_smooth(size=2) +
+  facet_grid(rows = vars(zone_publi))
+kruskal.test(x = grain_size$`X<63`, g = grain_size$zone_publi)
+
+ggplot(grain_size) +
+  aes(x = -dist,
+      y= `X<63`) +
+  geom_smooth(size=2) +
+  facet_grid(rows = vars(season))
+kruskal.test(x = grain_size$`X<63`, g = grain_size$season)
+
+#----------------------------------------------
+
+# change table structure for grain size: add a column "grain size" with factor values = `X<63`:`1000<X<2000`
+grain_size_L = pivot_longer(grain_size,
+                          cols = `X<63`:`1000<X<2000`,
+                          names_to = "grain size")
+
+# sort observations
+grain_size_L = arrange(grain_size_L, zone_publi, dist)
+
+# sort "grain size" factorial values 
+grain_size_L$`grain size` = factor(grain_size_L$`grain size`,
+                                 levels = c("1000<X<2000",
+                                            "750<X<1000",
+                                            "500<X<750",
+                                            "250<X<500",
+                                            "125<X<250",
+                                            "63<X<125",
+                                            "X<63"))
+
+
+
+ggplot(grain_size_L, aes(x = site, y= value, fill = `grain size`)) +
+  geom_bar(stat="identity", position = "fill") +
+  facet_grid(rows = c(vars(season), vars(year)))
+
+ggplot(grain_size_L, aes(x = as.factor(dist), y= value, fill = `grain size`)) +
+  geom_bar(stat="identity", position = "fill") +
+  facet_grid(rows = c(vars(season), vars(year), vars(zone_publi)))
+
+
+
+
+#---------------------
+
+# CARTES CONTAMINATION
+# sÃ©lection des limites de la carte ; coordonnÃ©es en degrÃ©s dÃ©cimaux (Ã  convertir pour les donnÃ©es)
+seine<-c(left=0, right=0.3, bottom=49.395, top=49.49)
+# importation de la carte
+map<-get_map(seine, maptype="toner-lite")
+
+ggmap(map) +
+  geom_point(aes(x=lon, y=lat,
+                 color=zone_publi,
+                 size=value),
+             data=grain_size, alpha=.8) +
+  scale_colour_hue(c=80, l=50)+
+  geom_segment(aes(y=49.4, yend=49.455,x=0.08, xend=0.125))+
+  geom_segment(aes(y=49.435, yend=49.425,x=0.11, xend=0.22))+
+  labs(x="Longitude", y="Latitude")+
+  theme(legend.title = element_text(colour="black", size = 16, face = "bold"),
+        legend.text = element_text(colour="black", size = 14))  +
+  geom_point(aes(x=0.28, y= 49.437))
+
+ggmap(map) +
+  geom_point(aes(x=lon, y=lat,
+                 color=site),
+             data=grain_size,
+             size=5) +
+  geom_text(data=grain_size, aes(label=site),
+            position = "nudge",
+            size=2,check_overlap = T) +
+  scale_colour_hue(c=80, l=50)+
+  geom_segment(aes(y=49.4, yend=49.455,x=0.08, xend=0.125))+
+  geom_segment(aes(y=49.435, yend=49.425,x=0.11, xend=0.22))+
+  labs(x="Longitude", y="Latitude")+
+  theme(legend.title = element_text(colour="black", size = 16, face = "bold"),
+        legend.text = element_text(colour="black", size = 14))  +
+  geom_point(aes(x=0.28, y= 49.437))
+
