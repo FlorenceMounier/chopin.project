@@ -1,0 +1,246 @@
+####################################
+##          PROJET CHOPIN
+## 
+##       FONCTION GRAPHIQUE 
+##       PROFILS NORMALISES
+####################################
+
+
+
+GRAPH_normalised_profiles = function(compartment){
+  
+if(compartment=="SEDIMENT"){
+  dataset = sed_contam
+  dataset_juin = sed_contam_juin
+  dataset_oct = sed_contam_oct
+  selected_PCB = PCB_selected_sed
+  selected_PFAS = PFAS_selected_sed
+  selected_HBCDD = HBCDD_selected_sed
+  wd = "Output/SEDIMENT/"
+}else{if(compartment=="BENTHOS"){
+  dataset = benthos_contam
+  dataset_juin = benthos_contam_juin
+  dataset_oct = benthos_contam_oct
+  selected_PCB = PCB_selected_benthos
+  selected_PFAS = PFAS_selected_benthos
+  selected_HBCDD = HBCDD_selected_benthos
+  wd = "Output/BENTHOS/"
+}else{if(compartment=="SOLES"){
+  dataset = soles_contam
+  dataset_juin = soles_contam_juin
+  dataset_oct = soles_contam_oct
+  selected_PCB = PCB_selected_soles
+  selected_PFAS = PFAS_selected_soles
+  selected_HBCDD = HBCDD_selected_soles
+  wd = "Output/SOLES/"
+}else{print("WARNING: unkown compartment in ")}}}
+  
+#-------------------------------------------
+# Mise en forme jeu de donne?s pour les PCB s?lectionn?s
+
+normalised_PCB = data.frame("contamination"=unlist(dataset[,paste(selected_PCB,"_normalised_sum_ng.gdw",sep="")])*100, 
+                            "contam"=unlist(lapply(selected_PCB, FUN = rep.int, times=dim(dataset)[1])))
+normalised_PCB$sample_TAG = rep.int(dataset$sample_TAG, times = length(selected_PCB))
+normalised_PCB$season = rep.int(dataset$season, times = length(selected_PCB))
+normalised_PCB$zone = rep.int(dataset$zone, times = length(selected_PCB))
+normalised_PCB$species = rep.int(dataset$species, times = length(selected_PCB))
+normalised_PCB$labels = rep.int(dataset$labels, times = length(selected_PCB))
+
+normalised_PCB$contam = factor(x = normalised_PCB$contam,
+                               levels = selected_PCB,
+                               labels = selected_PCB)
+
+normalised_PCB_juin = normalised_PCB[which(normalised_PCB$season=="Printemps"),]
+normalised_PCB_oct = normalised_PCB[which(normalised_PCB$season=="Automne"),]
+
+
+#-------------------------------------------
+# Mise en forme jeu de donne?s PFAS
+# PFAS non dos?s dans le benthos : FOSAA, PFBS, PFHpS., X4.2.FTS., HFPO.DA., NaDONA.
+
+normalised_PFAS = data.frame("contamination"=unlist(dataset[,paste(selected_PFAS,"_normalised_sum_ng.gdw",sep="")])*100, 
+                             "contam"=unlist(lapply(selected_PFAS, FUN = rep.int, times=dim(dataset)[1])))
+normalised_PFAS$sample_TAG = rep.int(dataset$sample_TAG, times = length(selected_PFAS))
+normalised_PFAS$season = rep.int(dataset$season, times = length(selected_PFAS))
+normalised_PFAS$zone = rep.int(dataset$zone, times = length(selected_PFAS))
+normalised_PFAS$species = rep.int(dataset$species, times = length(selected_PFAS))
+normalised_PFAS$labels = rep.int(dataset$labels, times = length(selected_PFAS))
+
+# order levels and labels par  famille
+normalised_PFAS$contam = factor(x = normalised_PFAS$contam,
+                                levels = selected_PFAS,
+                                labels = selected_PFAS)
+
+
+normalised_PFAS_juin = normalised_PFAS[which(normalised_PFAS$season=="Printemps"),]
+normalised_PFAS_oct = normalised_PFAS[which(normalised_PFAS$season=="Automne"),]
+
+
+#-------------------------------------------
+# Mise en forme jeu de donne?s HBCDD
+
+normalised_HBCDD = data.frame("contamination"=unlist(dataset[,paste(selected_HBCDD,"_normalised_sum_ng.gdw",sep="")])*100, 
+                              "contam"=unlist(lapply(selected_HBCDD, FUN = rep.int, times=dim(dataset)[1])))
+normalised_HBCDD$sample_TAG = rep.int(dataset$sample_TAG, times = length(selected_HBCDD))
+normalised_HBCDD$season = rep.int(dataset$season, times = length(selected_HBCDD))
+normalised_HBCDD$zone = rep.int(dataset$zone, times = length(selected_HBCDD))
+normalised_HBCDD$species = rep.int(dataset$species, times = length(selected_HBCDD))
+normalised_HBCDD$labels = rep.int(dataset$labels, times = length(selected_HBCDD))
+
+normalised_HBCDD_juin = normalised_HBCDD[which(normalised_HBCDD$season=="Printemps"),]
+normalised_HBCDD_oct = normalised_HBCDD[which(normalised_HBCDD$season=="Automne"),]
+
+}
+
+# 
+# 
+# png(paste(wd, compartment,"normalised_profiles.jpeg", sep = ""),width = 30, height = 25, units = "cm",res=720)
+# 
+# 
+# b1 = ggplot(normalised_PCB_juin, aes(x=sample_TAG, y=contamination, fill=contam)) + 
+#   geom_bar(stat="identity", width=0.5)+
+#   scale_color_viridis(discrete = TRUE, option = "D")+
+#   scale_fill_viridis(discrete = TRUE) +
+#   scale_x_discrete(limits=normalised_PCB_juin$sample_TAG[1:length(dataset_juin$sample_TAG)][order(dataset_juin$zone)[1:length(dataset_juin$sample_TAG)]]) +
+#   #scale_x_discrete(labels=dataset_juin$species)+
+#   annotate(size=3,"text", x=3.5, y=105, label="Embouchure")+
+#   geom_vline(xintercept=6.5) +
+#   annotate(size=3,"text", x=9.5, y=105, label="Fosse Nord")+
+#   geom_vline(xintercept=12.5) + 
+#   annotate(size=3,"text", x=14.5, y=105, label="Fosse Sud")+
+#   theme_bw() +
+#   theme(legend.position="none",title = element_text(size=12)) +
+#   theme(axis.text.x = element_blank())+
+#   #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
+#   #guides(col=guide_legend(nrow=2)) +
+#   labs(title="Juin 2017", x=NULL, y=expression(paste("% de la ",sum()," des PCB")))
+# 
+# 
+# b2 = ggplot(normalised_PCB_oct, aes(x=sample_TAG, y=contamination, fill=contam)) + 
+#   geom_bar(stat="identity", width=0.5)+
+#   scale_color_viridis(discrete = TRUE, option = "D")+
+#   scale_fill_viridis(discrete = TRUE) +
+#   scale_x_discrete(limits=normalised_PCB_oct$sample_TAG[1:length(dataset_oct$sample_TAG)][order(dataset_oct$zone)[1:length(dataset_oct$sample_TAG)]]) +
+#   #scale_x_discrete(labels=dataset_juin$species)+
+#   annotate(size=2,"text", x=1, y=105, label="CH")+
+#   geom_vline(xintercept=1.5) +
+#   annotate(size=3,"text", x=7.5, y=105, label="Embouchure")+
+#   geom_vline(xintercept=14.5) +
+#   annotate(size=3,"text", x=17.5, y=105, label="Fosse Nord")+
+#   geom_vline(xintercept=21.5) +
+#   annotate(size=3,"text", x=27.5, y=105, label="Fosse Sud")+
+#   theme_bw() +
+#   #theme(legend.position="none") +
+#   theme(axis.text.x = element_blank(),title = element_text(size=12))+
+#   #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
+#   guides(size=F, fill=guide_legend(ncol=1)) +
+#   theme(plot.margin = margin(0.2,0.8,0.2,0.2,"cm"), legend.text = element_text(size=12))+
+#   labs(title="Octobre 2017", x=NULL, y=NULL, fill="PCB")
+# 
+# 
+# 
+# b3 = ggplot(normalised_PFAS_juin, aes(x=sample_TAG, y=contamination, fill=contam)) + 
+#   geom_bar(stat="identity", width=0.5)+
+#   scale_color_viridis(discrete = TRUE, option = "D")+
+#   scale_fill_viridis(discrete = TRUE) +
+#   scale_x_discrete(limits=normalised_PFAS_juin$sample_TAG[1:length(dataset_juin$sample_TAG)][order(dataset_juin$zone)[1:length(dataset_juin$sample_TAG)]]) +
+#   #scale_x_discrete(labels=dataset_juin$species)+
+#   geom_vline(xintercept=6.5) +
+#   geom_vline(xintercept=12.5) + 
+#   # annotate(size=3,"text", x=3.5, y=105, label="Embouchure")+
+#   # annotate(size=3,"text", x=9.5, y=105, label="Fosse Nord")+
+#   # annotate(size=3,"text", x=14.5, y=105, label="Fosse Sud")+
+#   theme_bw() +
+#   theme(legend.position="none") +
+#   theme(axis.text.x = element_blank())+
+#   #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
+#   #guides(col=guide_legend(nrow=2)) +
+#   labs(title=NULL, x=NULL, y=expression(paste("% de la ",sum()," des PFAS")))
+# 
+# 
+# b4 = ggplot(normalised_PFAS_oct, aes(x=sample_TAG, y=contamination, fill=contam)) + 
+#   geom_bar(stat="identity", width=0.5)+
+#   scale_color_viridis(discrete = TRUE, option = "D")+
+#   scale_fill_viridis(discrete = TRUE) +
+#   scale_x_discrete(limits=normalised_PFAS_oct$sample_TAG[1:length(dataset_oct$sample_TAG)][order(dataset_oct$zone)[1:length(dataset_oct$sample_TAG)]]) +
+#   #scale_x_discrete(labels=dataset_juin$species)+
+#   # annotate(size=2,"text", x=1, y=105, label="CH")+
+#   # annotate(size=3,"text", x=7.5, y=105, label="Embouchure")+
+#   # annotate(size=3,"text", x=17.5, y=105, label="Fosse Nord")+
+#   # annotate(size=3,"text", x=27.5, y=105, label="Fosse Sud")+
+#   geom_vline(xintercept=1.5) +
+#   geom_vline(xintercept=14.5) +
+#   geom_vline(xintercept=21.5) +
+#   theme_bw() +
+#   #theme(legend.position="none") +
+#   theme(axis.text.x = element_blank(),plot.margin = margin(0.2,0,0.2,0.2,"cm"), legend.text = element_text(size=12))+
+#   #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
+#   guides(fill=guide_legend(ncol=1)) +
+#   labs(title=NULL, x=NULL, y=NULL, fill="PFAS")
+# 
+# 
+# 
+# b5 = ggplot(normalised_HBCDD_juin, aes(x=sample_TAG, y=contamination, fill=contam)) + 
+#   geom_bar(stat="identity", width=0.5)+
+#   scale_color_viridis(discrete = TRUE, option = "D")+
+#   scale_fill_viridis(discrete = TRUE) +
+#   scale_x_discrete(limits=normalised_HBCDD_juin$sample_TAG[1:length(dataset_juin$sample_TAG)][order(dataset_juin$zone)[1:length(dataset_juin$sample_TAG)]],
+#                    labels=normalised_HBCDD_juin$labels[1:length(dataset_juin$sample_TAG)][order(dataset_juin$zone)[1:length(dataset_juin$sample_TAG)]]) +
+#   #scale_x_discrete(labels=dataset_juin$species)+
+#   geom_vline(xintercept=6.5) +
+#   geom_vline(xintercept=12.5) + 
+#   # annotate(size=3,"text", x=3.5, y=105, label="Embouchure")+
+#   # annotate(size=3,"text", x=9.5, y=105, label="Fosse Nord")+
+#   # annotate(size=3,"text", x=14.5, y=105, label="Fosse Sud")+
+#   theme_bw() +
+#   theme(legend.position="none") +
+#   theme(axis.text.x = element_blank())+
+#   theme(axis.text.x=element_text(size=12, angle=90,hjust=1)) +
+#   #guides(col=guide_legend(nrow=2)) +
+#   labs(title=NULL, x=NULL, y=expression(paste("% de la ", sum()," des HBCDD")))
+# 
+# 
+# b6 = ggplot(normalised_HBCDD_oct, aes(x=sample_TAG, y=contamination, fill=contam)) + 
+#   geom_bar(stat="identity", width=0.5)+
+#   scale_color_viridis(discrete = TRUE, option = "D")+
+#   scale_fill_viridis(discrete = TRUE) +
+#   scale_x_discrete(limits=normalised_HBCDD_oct$sample_TAG[1:length(dataset_oct$sample_TAG)][order(dataset_oct$zone)[1:length(dataset_oct$sample_TAG)]],
+#                    labels=normalised_HBCDD_oct$labels[1:length(dataset_oct$sample_TAG)][order(dataset_oct$zone)[1:length(dataset_oct$sample_TAG)]]) +
+#   #scale_x_discrete(labels=dataset_juin$species)+
+#   # annotate(size=2,"text", x=1, y=105, label="CH")+
+#   # annotate(size=3,"text", x=7.5, y=105, label="Embouchure")+
+#   # annotate(size=3,"text", x=17.5, y=105, label="Fosse Nord")+
+#   # annotate(size=3,"text", x=27.5, y=105, label="Fosse Sud")+
+#   geom_vline(xintercept=1.5) +
+#   geom_vline(xintercept=14.5) +
+#   geom_vline(xintercept=21.5) +
+#   theme_bw() +
+#   guides(size=F, fill=guide_legend(ncol=1)) +
+#   theme(plot.margin = margin(0.2,0.2,0.2,0.2,"cm"))+
+#   theme(axis.text.x=element_text(size=12, angle=90,vjust=0.4, hjust=1), 
+#         legend.position="right", legend.text = element_text(size=12)) +
+#   labs(title=NULL, x=NULL, y=NULL, fill="HBCDD")
+# 
+# a = 7
+# b = 7
+# c = 6
+# z=a+b+c
+# 
+# grid.arrange(b1,b2,b3,b4,b5,b6,
+#              ncol=3,nrow=z,
+#              layout_matrix = rbind(t(matrix(rep.int(c(1,2,2),times = a),ncol = a, nrow=3)),
+#                                    t(matrix(rep.int(c(3,4,4),times = b),ncol = b, nrow=3)),
+#                                    t(matrix(rep.int(c(5,6,6),times = c),ncol = c, nrow=3)))
+# )
+# 
+# dev.off()
+# 
+# 
+# 
+# }
+# 
+# 
+# 
+# 
+# GRAPH_normalised_profiles(compartment = "BENTHOS")
+# GRAPH_normalised_profiles(compartment = "SOLES")
