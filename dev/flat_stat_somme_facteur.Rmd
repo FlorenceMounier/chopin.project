@@ -1,14 +1,32 @@
-####################################
-##         PROJET CHOPIN
-## 
-##       FONCTION ANALYSE 
-##   STATISTIQUES SUR LES SOMMES
-####################################
+---
+title: "Fonction de calcul de statistiques par facteur"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
+```{r development, include=FALSE}
+library(testthat)
+```
 
-#-------------------------------------------------
-# EFFECTIFS analyses et detectes/quantifies
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
 
+# Fonction
+
+```{r function-stat_somme_facteur}
+#' stat_somme_facteur Effectifs analysés et sommes par famille de contaminant en fonction d'un facteur
+#'
+#' @param dataset Tableau brut de contaminations de chaque échantillons pour chaque contaminant des familles PCB, PFAS et HBCDD
+#' @param facteur colonne de dataset indiquant le facteur à utiliser
+#' @param title préfixe du facteur 
+#'
+#' @return dataframe Effectifs et statistiques de contamination par famille de contaminants pour un sous-groupe de données défini par un facteur.
+#' @export
+#'
+#' @examples
 stat_somme_facteur = function(dataset,facteur,title){
   
   data.frame("Facteur" = paste(title,levels(as.factor(dataset[,facteur]))),
@@ -45,3 +63,35 @@ stat_somme_facteur = function(dataset,facteur,title){
              "Max HBCDD" = round(tapply(dataset$sommeHBCDD_ng_gdw, dataset[,facteur], FUN = max, na.rm=T),digits = 2)
   )
 }
+```
+
+Exemple d'utilisation
+```{r examples-stat_somme_facteur}
+library(chopin.project)
+soles_G0_somme_zone <- stat_somme_facteur(dataset=solesG0_contam, facteur = "zone", title="G0")
+```
+
+
+```{r tests-stat_somme_facteur}
+test_that("stat_somme_facteur works", {
+library(chopin.project)
+soles_G0_somme_zone <- stat_somme_facteur(dataset=solesG0_contam, facteur = "zone", title="G0")
+
+# Colonnes du tableau de sortie
+testthat::expect_equal(colnames(soles_G0_somme_zone),
+                  c("Facteur", "N.total", "N.analysed.PCB", "Mediane.PCB", "Moyenne.PCB", 
+"Min.PCB", "Max.PCB", "N.analysed.PFAS", "Mediane.PFAS", "Moyenne.PFAS", 
+"Min.PFAS", "Max.PFAS", "N.analysed.HBCDD", "Mediane.HBCDD", 
+"Moyenne.HBCDD", "Min.HBCDD", "Max.HBCDD"))
+
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_stat_somme_facteur.Rmd", 
+               vignette_name = NA)
+```
+

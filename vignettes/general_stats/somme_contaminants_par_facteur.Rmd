@@ -1,0 +1,47 @@
+---
+title: "Statistiques sur les sommes par facteurs"
+author: "Florence Mounier"
+date: "2025-01-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(chopin.project)
+library(writexl)
+```
+
+## Benthos
+
+```{r}
+benthos_somme_taxon = stat_somme_facteur(dataset=benthos_contam, facteur = "grp", title="")
+benthos_somme_zone = stat_somme_facteur(dataset=benthos_contam, facteur = "zone", title="")
+benthos_somme_saison = stat_somme_facteur(dataset=benthos_contam, facteur = "season", title="")
+```
+
+```{r}
+benthos_somme_par_famille = rbind(benthos_somme_taxon, benthos_somme_zone, benthos_somme_saison)
+```
+
+```{r}
+write_xlsx(benthos_somme_par_famille,
+           path = "tableau_sommaire_somme_par_famille_BENTHOS.xlsx")
+```
+
+## Soles
+
+```{r}
+soles_somme_group = stat_somme_facteur(dataset=soles_contam, facteur = "grp", title="")
+soles_G0_somme_zone = stat_somme_facteur(dataset=solesG0_contam, facteur = "zone", title="G0")
+soles_G0_somme_saison = stat_somme_facteur(dataset=solesG0_contam, facteur = "season", title="G0")
+```
+
+```{r}
+soles_somme_par_famille = rbind(soles_somme_group, soles_G0_somme_zone, soles_G0_somme_saison)
+```
+
+```{r}
+write_xlsx(soles_somme_par_famille,
+           path = "tableau_sommaire_somme_par_famille_SOLES.xlsx")
+```
+

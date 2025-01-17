@@ -1,0 +1,13 @@
+flat_stat_somme_facteur.Rmd:
+  path: dev/flat_stat_somme_facteur.Rmd
+  state: active
+  R: R/stat_somme_facteur.R
+  tests: tests/testthat/test-stat_somme_facteur.R
+  vignettes: []
+  inflate:
+    flat_file: dev/flat_stat_somme_facteur.Rmd
+    vignette_name: .na
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
