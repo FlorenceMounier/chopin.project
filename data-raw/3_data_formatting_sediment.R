@@ -48,7 +48,7 @@ sed_contam <- sed_contam %>%
 ## Rename columns to add the unit, ng.gdw-1, as a suffix
 
 sed_contam <- sed_contam %>%
-rename_at(c(PCB, PFAS, HBCDD), ~ paste(., "ng_gdw", sep = "_"))
+rename_at(c(PCB, PFAS, HBCDD), ~ paste(., "ng.gdw", sep = "_"))
 
 
 ## Compute concentrations in ng.gCorg-1
@@ -59,8 +59,8 @@ gdw_TO_gCorg <- function(contams, data){
     contam_ng_gdw / Corg_ng_g
   }
   data %>%
-    mutate_at(paste(contams, "ng_gdw", sep = "_"), list("tmp" = contam_ng_gCorg)) %>%
-    rename_with(.cols = ends_with("tmp"), ~ paste(contams, "ng_gCorg", sep = "_"))
+    mutate_at(paste(contams, "ng.gdw", sep = "_"), list("tmp" = contam_ng_gCorg)) %>%
+    rename_with(.cols = ends_with("tmp"), ~ paste(contams, "ng.gCorg", sep = "_"))
 }
 
 sed_contam <- gdw_TO_gCorg(contams = c(PCB, PFAS, HBCDD), data = sed_contam)
@@ -83,15 +83,15 @@ sum_by_family <- function(family, contams, data, unit){
 
 # * in ng.gCorg-1
 
-sed_contam <- sum_by_family(contams = PCB, family = "PCB", data = sed_contam, unit = "ng_gCorg")
-sed_contam <- sum_by_family(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng_gCorg")
-sed_contam <- sum_by_family(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng_gCorg")
+sed_contam <- sum_by_family(contams = PCB, family = "PCB", data = sed_contam, unit = "ng.gCorg")
+sed_contam <- sum_by_family(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng.gCorg")
+sed_contam <- sum_by_family(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng.gCorg")
 
 # * in ng.gdw-1
 
-sed_contam <- sum_by_family(contams = PCB, family = "PCB", data = sed_contam, unit = "ng_gdw")
-sed_contam <- sum_by_family(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng_gdw")
-sed_contam <- sum_by_family(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng_gdw")
+sed_contam <- sum_by_family(contams = PCB, family = "PCB", data = sed_contam, unit = "ng.gdw")
+sed_contam <- sum_by_family(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng.gdw")
+sed_contam <- sum_by_family(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng.gdw")
 
 
 ## Compute normalised concentrations by the sum by family ( ng_gdw )
@@ -108,14 +108,14 @@ normalised_conc <- function(family, contams, data, unit){
 }
 
 # * in ng.gCorg-1
-sed_contam <- normalised_conc(contams = PCB, family = "PCB", data = sed_contam, unit = "ng_gCorg")
-sed_contam <- normalised_conc(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng_gCorg")
-sed_contam <- normalised_conc(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng_gCorg")
+sed_contam <- normalised_conc(contams = PCB, family = "PCB", data = sed_contam, unit = "ng.gCorg")
+sed_contam <- normalised_conc(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng.gCorg")
+sed_contam <- normalised_conc(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng.gCorg")
 
 # * in ng.gdw-1
-sed_contam <- normalised_conc(contams = PCB, family = "PCB", data = sed_contam, unit = "ng_gdw")
-sed_contam <- normalised_conc(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng_gdw")
-sed_contam <- normalised_conc(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng_gdw")
+sed_contam <- normalised_conc(contams = PCB, family = "PCB", data = sed_contam, unit = "ng.gdw")
+sed_contam <- normalised_conc(contams = PFAS, family = "PFAS", data = sed_contam, unit = "ng.gdw")
+sed_contam <- normalised_conc(contams = HBCDD, family = "HBCDD", data = sed_contam, unit = "ng.gdw")
 
 
 # Save dataset
