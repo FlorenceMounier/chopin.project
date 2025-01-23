@@ -7,7 +7,7 @@ Maintainer: Florence Mounier <florence.mounier42@gmail.com>
 Description: Contaminants organoHalogénés histOriques et d’intérêt émergent Présence et transfert vers la sole commune Impact de la contamination sur la Nourricerie et conséquences sur la population.
 License: MIT
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 Suggests: 
     knitr,
     rmarkdown,
