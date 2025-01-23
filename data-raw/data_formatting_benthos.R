@@ -15,11 +15,11 @@ library(readxl)
 ## Load contaminant lists and labels
 # File "1_data_formatting_contaminants.R" should be ran previously
 # If not, run the following script
-source(file = "data-raw/1_data_formatting_contaminants.R")
+source(file = "data-raw/data_formatting_contaminants.R")
 
 ## Load data
 
-benthos_contam = read_excel(here("data-raw/CHOPIN_BASE_DE_DONNEES_GENERALE.xlsx"),
+benthos_contam = read_excel("data-raw/CHOPIN_BASE_DE_DONNEES_GENERALE.xlsx",
                            sheet = "benthos")
 
 
