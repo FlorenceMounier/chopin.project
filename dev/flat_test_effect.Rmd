@@ -1,0 +1,63 @@
+---
+title: "flat_test_effect.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# test_effect
+
+```{r development-test_effect}
+# Prepare the code of your function here
+```
+
+```{r function-test_effect}
+#' test_effect Test l'effet d'une variable qualitative sur une variable quantitative
+#' 
+#' Lance les tests suivants :
+#' - Kruskal-Wallis Rank Sum Test
+#' - Pairwise Wilcoxon Rank Sum Tests
+#' - Wilcoxon Rank Sum and Signed Rank Tests
+#' 
+#' @param dataset dataframe contenant les deux variables à étudier
+#' @param variable vecteur du dataframe - variable quantitative
+#' @param factor vecteur du dataframe - variable qualitative
+#'
+#' @return 1
+#' @export
+#'
+#' @examples
+test_effect = function(dataset, variable, factor) {
+  print(paste(variable, factor, sep = " / "))
+  print(kruskal.test(dataset[, variable], g = dataset[, factor]))
+  print(pairwise.wilcox.test(dataset[, variable], g = dataset[, factor]))
+  print(wilcox.test(dataset[, variable], g = dataset[, factor]))
+}
+```
+
+```{r examples-test_effect}
+test_effect(dataset = iris, variable = "Sepal.Length", factor = "Species")
+```
+
+```{r tests-test_effect}
+test_that("test_effect works", {
+  expect_true(inherits(test_effect, "function"))
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_test_effect.Rmd", vignette_name = NA)
+```
+

@@ -2,3 +2,4 @@
 
 export(occ)
 export(stat_somme_facteur)
+export(test_effect)

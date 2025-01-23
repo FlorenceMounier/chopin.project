@@ -26,3 +26,18 @@ flat_stat_somme_facteur.Rmd:
     check: true
     document: true
     overwrite: ask
+flat_test_effect.Rmd:
+  path: dev/flat_test_effect.Rmd
+  state: active
+  R: R/test_effect.R
+  tests: tests/testthat/test-test_effect.R
+  vignettes: []
+  inflate:
+    flat_file: dev/flat_test_effect.Rmd
+    vignette_name: .na
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
+    clean: ask
+    codecov: false

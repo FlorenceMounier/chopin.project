@@ -1,24 +1,10 @@
 ####################################
 ##         PROJET CHOPIN
-## 
+##
 ##            TESTS
-##           EFFETS 
-##      
+##           EFFETS
+##
 ####################################
-
-
-
-###############################################################
-## FONCTION DES TESTS
-
-test_effect = function(dataset, variable, factor){
-  print(paste(variable,factor, sep=" / "))
-  print(kruskal.test(dataset[,variable], g = dataset[,factor]))
-  print(pairwise.wilcox.test(dataset[,variable], g = dataset[,factor]))
-  print(wilcox.test(dataset[,variable], g = dataset[,factor]))
-  
-}
-
 
 
 ###############################################################
