@@ -15,13 +15,6 @@ On sélectionne les contaminants si :
 -   au moins un échantillon a un niveau de contamination supérieur à 5% de la somme par famille
 -   au moins 50% des échantillons a un niveau de contamination non nul
 
-```{r}
-## Fonction de calcul de la fréquence d'occurence (concentration != 0) parmi les échantillons analysés (non NA)
-occ = function(vector){
-  length(which(na.omit(vector)!=0)) / length(na.omit(vector))
-}
-```
-
 ## Sediment
 
 ```{r}

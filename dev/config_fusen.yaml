@@ -1,3 +1,18 @@
+flat_stat_occurence.Rmd:
+  path: dev/flat_stat_occurence.Rmd
+  state: active
+  R: R/occ.R
+  tests: tests/testthat/test-occ.R
+  vignettes: []
+  inflate:
+    flat_file: dev/flat_stat_occurence.Rmd
+    vignette_name: .na
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
+    clean: ask
+    codecov: false
 flat_stat_somme_facteur.Rmd:
   path: dev/flat_stat_somme_facteur.Rmd
   state: active

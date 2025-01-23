@@ -1,0 +1,54 @@
+---
+title: "Fonction de calcul d'occurence dans un vecteur"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# Fonction
+
+```{r function-occ}
+#' occ Fonction de calcul de la fréquence d'occurence (concentration != 0) parmi les échantillons analysés (non NA)
+#'
+#' @param vector Vecteur contenant des valeurs de contamination ou des valeurs manquantes
+#'
+#' @return value Proportion de valeurs non nulles parmis 
+#' @export
+#'
+#' @examples
+occ = function(vector){
+  length(which(na.omit(vector)!=0)) / length(na.omit(vector))
+}
+```
+
+Exemple d'utilisation
+```{r examples-occ}
+ vec <- c(0, 1, 5, NA)
+ occ(vector = vec)
+```
+
+
+```{r tests-occ}
+test_that("occ works", {
+ vec <- c(0, 1, 5, 2, 12, NA)
+testthat::expect_equal( occ(vector = vec), 0.8)
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_stat_occurence.Rmd", 
+               vignette_name = NA)
+```
+
