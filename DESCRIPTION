@@ -14,7 +14,7 @@ Suggests:
     testthat
 VignetteBuilder: 
     knitr
-Config/fusen/version: 0.5.1
+Config/fusen/version: 0.7.0
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
