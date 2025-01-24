@@ -9,6 +9,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(chopin.project)
+library(tidyverse)
 library(ggplot2)
 library(gridExtra)
 library(cowplot)
@@ -17,7 +18,7 @@ library(cowplot)
 ## SEDIMENTS
 
 ```{r}
-GRAPH_group_zone_saison(data = sed_contam, label_data = "SEDIMENTS", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd="Output/SEDIMENTS/")
+GRAPH_group_zone_saison(data = sed_contam, label_data = "SEDIMENTS", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd="")
 GRAPH_group_zone_saison(data = sed_contam,label_data = "SEDIMENTS",  variable = "sommePFCA_ng_gdw", label_y=expression(paste(sum(),"PFCA")), wd="Output/SEDIMENTS/")
 GRAPH_group_zone_saison(data = sed_contam,label_data = "SEDIMENTS",  variable = "sommePFSA_ng_gdw", label_y=expression(paste(sum(),"PFSA")), wd="Output/SEDIMENTS/")
 GRAPH_group_zone_saison(data = sed_contam,label_data = "SEDIMENTS",  variable = "sommeFOSA_ng_gdw", label_y=expression(paste(sum(),"FOSA et FOSAA")), wd="Output/SEDIMENTS/")
@@ -31,11 +32,11 @@ GRAPH_group_zone_saison(data = sed_contam, label_data = "SEDIMENTS", variable = 
 # Representation graphique des sommes par famille par taxon, zone et saison
 
 ```{r}
-GRAPH_group_zone_saison(data = benthos_contam, label_data = "BENTHOS", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd="Output/BENTHOS/")
-GRAPH_group_zone_saison(data = benthos_contam,label_data = "BENTHOS",  variable = "sommePFCA_ng_gdw", label_y=expression(paste(sum(),"PFCA")), wd="Output/BENTHOS/")
-GRAPH_group_zone_saison(data = benthos_contam,label_data = "BENTHOS",  variable = "sommePFSA_ng_gdw", label_y=expression(paste(sum(),"PFSA")), wd="Output/BENTHOS/")
-GRAPH_group_zone_saison(data = benthos_contam,label_data = "BENTHOS",  variable = "sommeFOSA_ng_gdw", label_y=expression(paste(sum(),"FOSA et FOSAA")), wd="Output/BENTHOS/")
-GRAPH_group_zone_saison(data = benthos_contam, label_data = "BENTHOS", variable = "sommeHBCDD_ng_gdw", label_y=expression(paste(sum(),"HBCDD")), wd="Output/BENTHOS/")
+GRAPH_group_zone_saison(data = benthos_contam, label_data = "BENTHOS", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd="")
+GRAPH_group_zone_saison(data = benthos_contam,label_data = "BENTHOS",  variable = "sommePFCA_ng_gdw", label_y=expression(paste(sum(),"PFCA")), wd="")
+GRAPH_group_zone_saison(data = benthos_contam,label_data = "BENTHOS",  variable = "sommePFSA_ng_gdw", label_y=expression(paste(sum(),"PFSA")), wd="")
+GRAPH_group_zone_saison(data = benthos_contam,label_data = "BENTHOS",  variable = "sommeFOSA_ng_gdw", label_y=expression(paste(sum(),"FOSA et FOSAA")), wd="")
+GRAPH_group_zone_saison(data = benthos_contam, label_data = "BENTHOS", variable = "sommeHBCDD_ng_gdw", label_y=expression(paste(sum(),"HBCDD")), wd="")
 ```
 
 
@@ -45,14 +46,27 @@ GRAPH_group_zone_saison(data = benthos_contam, label_data = "BENTHOS", variable 
 # Representation graphique des sommes par famille par classe d'âge, zone et saison
 
 ```{r}
-GRAPH_group_zone_saison(data = soles_contam, label_data = "soles", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd = "Output/SOLES/")
-GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommePFCA_ng_gdw", label_y=expression(paste(sum(),"PFCA")), wd = "Output/SOLES/")
-GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommePFSA_ng_gdw", label_y=expression(paste(sum(),"PFSA")), wd = "Output/SOLES/")
-GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommeFOSA_ng_gdw", label_y=expression(paste(sum(),"FOSA et FOSAA")), wd = "Output/SOLES/")
-GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommeautres_ng_gdw", label_y=expression(paste(sum(),"autres PFAS")), wd = "Output/SOLES/")
-GRAPH_group_zone_saison(data = soles_contam, label_data = "soles", variable = "sommeHBCDD_ng_gdw", label_y=expression(paste(sum(),"HBCDD")), wd = "Output/SOLES/")
+GRAPH_group_zone_saison(data = soles_contam, label_data = "soles", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd = "")
+GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommePFCA_ng_gdw", label_y=expression(paste(sum(),"PFCA")), wd = "")
+GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommePFSA_ng_gdw", label_y=expression(paste(sum(),"PFSA")), wd = "")
+GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommeFOSA_ng_gdw", label_y=expression(paste(sum(),"FOSA et FOSAA")), wd = "")
+GRAPH_group_zone_saison(data = soles_contam,label_data = "soles",  variable = "sommeautres_ng_gdw", label_y=expression(paste(sum(),"autres PFAS")), wd = "")
+GRAPH_group_zone_saison(data = soles_contam, label_data = "soles", variable = "sommeHBCDD_ng_gdw", label_y=expression(paste(sum(),"HBCDD")), wd = "")
 ```
 
+## BENTHOS ET SOLES
+
+```{r}
+sub_benthos_contam <- benthos_contam |> 
+  select(grp, season, zone, starts_with("somme")  )
+
+sub_soles_contam <- soles_contam |> 
+  select(grp, season, zone, starts_with("somme")  )
+
+soles_and_benthos_contam <- bind_rows(sub_benthos_contam, sub_soles_contam)
+
+GRAPH_group_zone_saison(data = soles_and_benthos_contam, label_data = "soles et benthos", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd = "")
+```
 
 
 

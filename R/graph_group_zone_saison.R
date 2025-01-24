@@ -15,7 +15,7 @@
 #' # graph_group_zone_saison()
 GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
   
-  p1 = ggplot(data, aes(x=grp, y=data[,variable], color=grp, fill=grp)) + 
+  p1 = ggplot(data, aes(x=grp, y=.data[[variable]], color=grp, fill=grp)) + 
     geom_dotplot(binaxis='y', stackdir='center')+
     theme_bw() +
     theme(legend.position="none") +
@@ -25,7 +25,7 @@ GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
     #guides(col=guide_legend(nrow=2)) +
     labs(title="GROUPE", x=NULL, y=label_y)
   
-  p2 = ggplot(data, aes(x=zone, y=data[,variable], color=zone, fill=zone)) + 
+  p2 = ggplot(data, aes(x=zone, y=.data[[variable]], color=zone, fill=zone)) + 
     geom_dotplot(binaxis='y', stackdir='center')+
     theme_bw() +
     theme(legend.position="none") +
@@ -35,7 +35,7 @@ GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
     #guides(col=guide_legend(nrow=2)) +
     labs(title="ZONE", x=NULL, y=NULL)
   
-  p3 = ggplot(data, aes(x=season, y=data[,variable], color=season, fill=season)) + 
+  p3 = ggplot(data, aes(x=season, y=.data[[variable]], color=season, fill=season)) + 
     geom_dotplot(binaxis='y', stackdir='center')+
     theme_bw() +
     theme(legend.position="none") +
@@ -51,6 +51,13 @@ GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
     draw_plot(p2, x=0.35,y=0, 0.45, 1) +
     draw_plot(p3, x=0.8,y=0, 0.2, 1)
   
-  ggsave(filename = paste(wd,label_data,"_",variable,"_group_zone_saison.jpeg", sep=""),
-         plot = plot,device = "jpeg",width = 20,height = 5, units = "cm",dpi=300)
+  ggsave(
+    filename = paste(wd, label_data, "_", variable, "_group_zone_saison.jpeg", sep = ""),
+    plot = plot,
+    device = "jpeg",
+    width = 20,
+    height = 5,
+    units = "cm",
+    dpi = 300
+  )
 }
