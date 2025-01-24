@@ -435,3 +435,37 @@ ggsave(filename = "d15N_soles_age_zone_saison.jpeg",
        device = "jpeg",width = 20,height = 7, units = "cm",dpi=300)
 
 ```
+
+## BENTHOS ET SOLES
+
+```{r}
+sub_ISOTOPES_benthos <- ISOTOPES_benthos |> 
+  select(grp, d15N)
+
+sub_ISOTOPES_soles_G0 <- ISOTOPES_soles_G0 |> 
+  select(grp, d15N) 
+
+soles_and_benthos_ISOTOPES <- bind_rows(sub_ISOTOPES_benthos, sub_ISOTOPES_soles_G0)
+soles_and_benthos_ISOTOPES$grp <- factor(soles_and_benthos_ISOTOPES$grp, levels = c("Bivalves", "Crustaces","Polychetes", "G0"))
+
+plot <- ggplot(soles_and_benthos_ISOTOPES, aes(x=grp, y=d15N, color=grp, fill=grp)) +
+  geom_dotplot(binaxis='y', stackdir='center')+
+  theme_bw() +
+  theme(legend.position="none") +
+  theme(axis.text.y = element_blank(), title = element_text(size=8))+
+  #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
+  stat_summary(fun = mean, geom="crossbar", size=0.5, color="darkgrey", width=.5) +
+  stat_summary(fun = median, geom="crossbar", size=0.5, color="black", width=.5) +
+  #guides(col=guide_legend(nrow=2)) +
+  labs(title=paste("d15N - Soles et proies benthiques"), x=NULL, y=NULL)
+
+ggsave(
+    filename = "isotopes_d15N_publi.jpeg",
+    plot = plot,
+    device = "jpeg",
+    width = 13,
+    height = 10,
+    units = "cm",
+    dpi = 300
+  )
+```

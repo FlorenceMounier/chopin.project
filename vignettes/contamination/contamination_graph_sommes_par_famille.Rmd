@@ -65,27 +65,43 @@ sub_soles_contam <- soles_contam |>
   filter(grp == "G0")
 
 soles_and_benthos_contam <- bind_rows(sub_benthos_contam, sub_soles_contam)
-soles_and_benthos_contam$grp <- factor(soles_and_benthos_contam$grp, levels = c("G0", "Bivalves", "Polychetes", "Crustaces"))
+soles_and_benthos_contam$grp <- factor(soles_and_benthos_contam$grp, levels = c("Bivalves", "Crustaces","Polychetes", "G0"))
 ```
 
 ```{r}
 p1 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommePCB_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"PCB")), title = expression(paste(sum(),"PCB")))
-p2 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommePFCA_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"PFCA")), title = expression(paste(sum(),"PFCA")))
-p3 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommePFSA_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"PFSA")), title = expression(paste(sum(),"PFSA")))
-p4 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommeFOSA_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"FOSA et FOSAA")), title = expression(paste(sum(),"FOSA et FOSAA")))
-p5 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommeHBCDD_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"HBCDD")), title = expression(paste(sum(),"HBCDD")))
+p2 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommePFAS_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"PFAS")), title = expression(paste(sum(),"PFAS")))
+p3 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommeHBCDD_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"HBCDD")), title = expression(paste(sum(),"HBCDD")))
 
-plot <- plot_grid(p1, p2, p3, p4, p5)
+plot <- plot_grid(p1, p2, p3, ncol = 3)
 
   ggsave(
     filename = "contamination_somme_famille_publi.jpeg",
     plot = plot,
     device = "jpeg",
     width = 25,
-    height = 20,
+    height = 10,
     units = "cm",
     dpi = 300
   )
 ```
 
+```{r}
+p1 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommePFCA_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"PFCA")), title = expression(paste(sum(),"PFCA")))
+p2 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommePFSA_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"PFSA")), title = expression(paste(sum(),"PFSA")))
+p3 = graph_grp(data = soles_and_benthos_contam, grp = "grp", variable = "sommeFOSA_ng_gdw", label_data = "soles et benthos", label_y=expression(paste(sum(),"FOSA et FOSAA")), title = expression(paste(sum(),"FOSA et FOSAA")))
+
+
+plot <- plot_grid(p1, p2, p3, ncol = 3)
+
+  ggsave(
+    filename = "contamination_somme_PFASsousfamille_publi.jpeg",
+    plot = plot,
+    device = "jpeg",
+    width = 25,
+    height = 10,
+    units = "cm",
+    dpi = 300
+  )
+```
 
