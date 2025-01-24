@@ -1,11 +1,38 @@
-####################################
-##         PROJET CHOPIN
-## 
-##       FONCTION GRAPHIQUE 
-##       TAXON, ZONE, SAISON
-####################################
+---
+title: "flat_graph_group_zone_saison.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
+```{r development, include=FALSE}
+library(testthat)
+```
 
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# graph_group_zone_saison
+
+```{r development-graph_group_zone_saison}
+# Prepare the code of your function here
+```
+
+```{r function-graph_group_zone_saison}
+#' graph_group_zone_saison  FONCTION GRAPHIQUE TAXON, ZONE, SAISON
+#'
+#' @param data 
+#' @param label_data 
+#' @param variable 
+#' @param label_y 
+#' @param wd 
+#'
+#' @return 1
+#' @export
+#'
+#' @examples
 GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
   
   p1 = ggplot(data, aes(x=grp, y=data[,variable], color=grp, fill=grp)) + 
@@ -47,3 +74,22 @@ GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
   ggsave(filename = paste(wd,label_data,"_",variable,"_group_zone_saison.jpeg", sep=""),
          plot = plot,device = "jpeg",width = 20,height = 5, units = "cm",dpi=300)
 }
+```
+
+```{r examples-graph_group_zone_saison}
+# graph_group_zone_saison()
+```
+
+```{r tests-graph_group_zone_saison}
+test_that("graph_group_zone_saison works", {
+  expect_true(inherits(graph_group_zone_saison, "function"))
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_graph_group_zone_saison.Rmd", vignette_name = NA)
+```
+

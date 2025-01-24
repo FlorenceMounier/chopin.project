@@ -1,12 +1,39 @@
-####################################
-##          PROJET CHOPIN
-## 
-##       FONCTION GRAPHIQUE 
-##   CONCENTRATIONS NORMALISEES
-####################################
+---
+title: "flat_graph_normalised_group_zone_saison.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
+```{r development, include=FALSE}
+library(testthat)
+```
 
-GRAPH_normalised_group_zone_saison = function(contaminant, label_contam, data,label_data, wd){
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# graph_normalised_group_zone_saison
+
+```{r development-graph_normalised_group_zone_saison}
+# Prepare the code of your function here
+```
+
+```{r function-graph_normalised_group_zone_saison}
+#' graph_normalised_group_zone_saison Title
+#'
+#' @param contaminant 
+#' @param label_contam 
+#' @param data 
+#' @param label_data 
+#' @param wd 
+#'
+#' @return 1
+#' @export
+#'
+#' @examples
+GRAPH_normalised_group_zone_saison <- function(contaminant, label_contam, data,label_data, wd){
 
   
     contam=paste(contaminant,"_normalised_sum_ng.gdw",sep="")
@@ -58,3 +85,23 @@ GRAPH_normalised_group_zone_saison = function(contaminant, label_contam, data,la
            plot = plot,device = "jpeg",width = 20,height = 5, units = "cm",dpi=300)
     
 }
+
+```
+
+```{r examples-graph_normalised_group_zone_saison}
+# graph_normalised_group_zone_saison()
+```
+
+```{r tests-graph_normalised_group_zone_saison}
+test_that("graph_normalised_group_zone_saison works", {
+  expect_true(inherits(graph_normalised_group_zone_saison, "function"))
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_graph_normalised_group_zone_saison.Rmd", vignette_name = NA)
+```
+
