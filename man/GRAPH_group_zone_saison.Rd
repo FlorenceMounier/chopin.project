@@ -24,5 +24,9 @@ GRAPH_group_zone_saison(data, label_data, variable, label_y, wd)
 graph_group_zone_saison  FONCTION GRAPHIQUE TAXON, ZONE, SAISON
 }
 \examples{
-# graph_group_zone_saison()
+sub_benthos_contam <- benthos_contam |> 
+  select(grp, season, zone, starts_with("somme")  )
+sub_benthos_contam <- as.data.frame(sub_benthos_contam)
+
+GRAPH_group_zone_saison(data = sub_benthos_contam, label_data = "benthos", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd = "")
 }

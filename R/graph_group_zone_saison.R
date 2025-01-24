@@ -12,40 +12,40 @@
 #' @export
 #'
 #' @examples
-#' # graph_group_zone_saison()
+#' sub_benthos_contam <- benthos_contam |> 
+#'   select(grp, season, zone, starts_with("somme")  )
+#' sub_benthos_contam <- as.data.frame(sub_benthos_contam)
+#'
+#' GRAPH_group_zone_saison(data = sub_benthos_contam, label_data = "benthos", variable = "sommePCB_ng_gdw", label_y=expression(paste(sum(),"PCB")), wd = "")
 GRAPH_group_zone_saison = function(data,label_data, variable,label_y, wd){
   
-  p1 = ggplot(data, aes(x=grp, y=.data[[variable]], color=grp, fill=grp)) + 
-    geom_dotplot(binaxis='y', stackdir='center')+
-    theme_bw() +
-    theme(legend.position="none") +
-    #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
-    stat_summary(fun = mean, geom="crossbar", size=0.5, color="darkgrey", width=.5) +
-    stat_summary(fun = median, geom="crossbar", size=0.5, color="black", width=.5) +
-    #guides(col=guide_legend(nrow=2)) +
-    labs(title="GROUPE", x=NULL, y=label_y)
+  p1 = graph_grp(
+    data = data,
+    grp = "grp",
+    variable = variable,
+    label_data = label_data,
+    label_y = label_y,
+    title = "GROUPE"
+  )
   
-  p2 = ggplot(data, aes(x=zone, y=.data[[variable]], color=zone, fill=zone)) + 
-    geom_dotplot(binaxis='y', stackdir='center')+
-    theme_bw() +
-    theme(legend.position="none") +
-    #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
-    stat_summary(fun = mean, geom="crossbar", size=0.5, color="darkgrey", width=.5) +
-    stat_summary(fun = median, geom="crossbar", size=0.5, color="black", width=.5) +
-    #guides(col=guide_legend(nrow=2)) +
-    labs(title="ZONE", x=NULL, y=NULL)
+  p2 = graph_grp(
+    data = data,
+    grp = "zone",
+    variable = variable,
+    label_data = label_data,
+    label_y = label_y,
+    title = "ZONE"
+  )
   
-  p3 = ggplot(data, aes(x=season, y=.data[[variable]], color=season, fill=season)) + 
-    geom_dotplot(binaxis='y', stackdir='center')+
-    theme_bw() +
-    theme(legend.position="none") +
-    #theme(axis.text.x=element_text(size=9, angle=45, hjust=1), legend.position="bottom") +
-    stat_summary(fun = mean, geom="crossbar", size=0.5, color="darkgrey", width=.5) +
-    stat_summary(fun = median, geom="crossbar", size=0.5, color="black", width=.5) +
-    #guides(col=guide_legend(nrow=2)) +
-    labs(title="SAISON", x=NULL, y=NULL)
-  
-  #list("plot_taxon"=p1,"plot_zone"=p2,"plot_saison"=p3)
+  p3 = graph_grp(
+    data = data,
+    grp = "season",
+    variable = variable,
+    label_data = label_data,
+    label_y = label_y,
+    title = "SAISON"
+  )
+
   plot=ggdraw()+
     draw_plot(p1, x=0, y=0, width=0.35, height=1) +
     draw_plot(p2, x=0.35,y=0, 0.45, 1) +

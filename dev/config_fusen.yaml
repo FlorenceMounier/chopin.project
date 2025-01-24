@@ -1,8 +1,12 @@
 flat_graph_group_zone_saison.Rmd:
   path: dev/flat_graph_group_zone_saison.Rmd
   state: active
-  R: R/graph_group_zone_saison.R
-  tests: tests/testthat/test-graph_group_zone_saison.R
+  R:
+  - R/graph_group_zone_saison.R
+  - R/graph_grp.R
+  tests:
+  - tests/testthat/test-graph_grp.R
+  - tests/testthat/test-graph_group_zone_saison.R
   vignettes: []
   inflate:
     flat_file: dev/flat_graph_group_zone_saison.Rmd

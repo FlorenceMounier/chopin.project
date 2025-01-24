@@ -3,6 +3,7 @@
 export(GRAPH_group_zone_saison)
 export(GRAPH_normalised_group_zone_saison)
 export(GRAPH_normalised_profiles)
+export(graph_grp)
 export(occ)
 export(stat_somme_facteur)
 export(test_effect)
