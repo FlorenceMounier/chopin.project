@@ -1,0 +1,303 @@
+---
+title: "Contenus stomacaux"
+author: "Florence Mounier"
+date: "2025-01-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(chopin.project)
+library("RColorBrewer")
+library(tidyverse)
+library(gridExtra)
+library(scales)
+```
+
+## Statistiques descriptives
+
+```{r}
+summary(as.factor(stomac_soles$Statut))
+
+summary(as.factor(stomac_soles$N.poissons))
+summary(as.factor(stomac_soles$espèce.stade))
+summary(as.factor(stomac_soles$secteur))
+```
+```{r}
+levels(stomac_soles$`espèce.stade`)
+```
+
+Prey species names:
+```{r}
+levels(stomac_soles$ScientificName_accepted)
+```
+
+
+Number of fish:
+```{r}
+length(levels(stomac_soles$`N.poissons`))
+```
+Sectors:
+```{r}
+levels(stomac_soles$secteur)
+```
+List of subdatasets of stomac content of interest:
+G0_CH, G0_EM, G0_FN, G0_FS, G1_CH, G1_EM, G1_FN, G1_FS, G2_FN, G2_EM
+```{r}
+list_grps = list_grp(stomac_soles)
+```
+
+## Stomach content for different sub datasets of soles
+
+Pie charts + table of values
+```{r}
+res_all_soles = get_res_diet(
+  main = "ALL SOLES",
+  grp = stomac_soles,
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+res_G0 = get_res_diet(
+  main = "Sole G0",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G0"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G1 = get_res_diet(
+  main = "Sole G1",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G1"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G2 = get_res_diet(
+  main = "Sole G2",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G2"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+
+res_G0_juin = get_res_diet(
+  main = "Sole G0 printemps",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G0" &
+                             stomac_soles$Campagne == "Print-17"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_oct = get_res_diet(
+  main = "Sole G0 automne",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G0" &
+                             stomac_soles$Campagne == "Aut-17"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+res_G1_juin = get_res_diet(
+  main = "Sole G1 printemps",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G1" &
+                             stomac_soles$Campagne == "Print-17"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G1_oct = get_res_diet(
+  main = "Sole G1 automne",
+  grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G1" &
+                             stomac_soles$Campagne == "Aut-17"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+
+res_che = get_res_diet(
+  main = "Chenal",
+  grp = stomac_soles[which(stomac_soles$secteur == "Chenal"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_che = get_res_diet(
+  main = "G0 Chenal",
+  grp = stomac_soles[which(stomac_soles$secteur == "Chenal" &
+                             stomac_soles$espèce.stade ==
+                             "Sole G0"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_che_juin = get_res_diet(
+  main = "G0 Chenal printemps",
+  grp = stomac_soles[which(
+    stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Print-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_che_oct = get_res_diet(
+  main = "G0 Chenal automne",
+  grp = stomac_soles[which(
+    stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Aut-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+
+res_emb = get_res_diet(
+  main = "Embouchure",
+  grp = stomac_soles[which(stomac_soles$secteur == "Embouchure"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_emb = get_res_diet(
+  main = "G0 Embouchure",
+  grp = stomac_soles[which(stomac_soles$secteur == "Embouchure" &
+                             stomac_soles$espèce.stade == "Sole G0"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_emb_juin = get_res_diet(
+  main = "G0 Embouchure printemps",
+  grp = stomac_soles[which(
+    stomac_soles$secteur == "Embouchure" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Print-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_emb_oct = get_res_diet(
+  main = "G0 Embouchure automne",
+  grp = stomac_soles[which(
+    stomac_soles$secteur == "Embouchure" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Aut-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+
+res_FS = get_res_diet(
+  main = "Fosse Sud",
+  grp = stomac_soles[which(stomac_soles$secteur == "Fosse Sud"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_FS = get_res_diet(
+  main = "G0 Fosse Sud",
+  grp = stomac_soles[which(stomac_soles$secteur == "Fosse Sud" &
+                             stomac_soles$espèce.stade == "Sole G0"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_FS_juin = get_res_diet(
+  main = "G0 Fosse Sud printemps",
+  grp = stomac_soles[which(
+    stomac_soles$secteur == "Fosse Sud" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Print-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_FS_oct = get_res_diet(
+  main = "G0 Fosse Sud automne",
+  grp = stomac_soles[which(
+    stomac_soles$secteur == "Fosse Sud" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Aut-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+
+res_FN = get_res_diet(
+  main = "Fosse Nord",
+  grp = stomac_soles[which(stomac_soles$secteur == "Fosse Nord"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_FN = get_res_diet(
+  main = "G0 Fosse Nord",
+  grp = stomac_soles[which(stomac_soles$secteur == "Fosse Nord" &
+                             stomac_soles$espèce.stade == "Sole G0"), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_FN_juin = get_res_diet(
+  main = "G0 Fosse Nord printemps",
+  grp = stomac_soles[which(
+    stomac_soles$secteur == "Fosse Nord" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Print-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+res_G0_FN_oct = get_res_diet(
+  main = "G0 Fosse Nord automne",
+  grp = stomac_soles[which(
+    stomac_soles$secteur == "Fosse Nord" &
+      stomac_soles$espèce.stade == "Sole G0" &
+      stomac_soles$Campagne == "Aut-17"
+  ), ],
+  min_abond = 0.1,  min_occur = 0.1
+)
+
+ALL_res = list(res_G0_che_juin$`med %abun`, res_G0_che_oct$`med %abun`,
+               res_G0_emb_juin$`med %abun`, res_G0_emb_oct$`med %abun`,
+               res_G0_FS_juin$`med %abun`, res_G0_FS_oct$`med %abun`,
+               res_G0_FN_juin$`med %abun`, res_G0_FN_oct$`med %abun`,
+               res_G1_juin$`med %abun`, res_G1_oct$`med %abun`,
+               res_G2$`med %abun`)
+
+```
+
+Change colors: 1 color for each species with similar colors per taxon
+
+```{r}
+list_species = c()
+for(t in 1:length(ALL_res)){
+  list_species = c(list_species, as.character(ALL_res[[t]]$species))
+}
+especes = levels(as.factor(list_species))
+
+list_taxon = c()
+for(s in 1:length(especes)){
+  list_taxon = c(list_taxon, as.character(table_species$taxon[which(table_species$species==especes[s])]))
+}
+list_taxon = data.frame("species"=especes, "taxon" = list_taxon)
+summary(list_taxon)
+
+col_annelid1 = brewer.pal(n = 9, name = 'OrRd')[c(1,2,3,4,6,7,8,9)]
+col_annelid2 = brewer.pal(n = 9, name = 'YlOrRd')[c(1,3,4,6,7,8,9)]
+col_arthro1 = brewer.pal(n = 9, name = 'Greens')[-1]
+col_arthro2 = brewer.pal(n = 8, name = 'Dark2')[c(1,3,5,8)]
+col_mollusc1 = brewer.pal(n = 9, name = 'Purples')[c(3,5,7,8,9)]
+col_mollusc2 = brewer.pal(n = 9, name = 'Blues')[c(4,6,8,9)]
+
+list_taxon = list_taxon[order(list_taxon$taxon),]
+list_taxon$col_species = c(col_annelid1,col_annelid2,
+                           col_arthro1,col_arthro2, "grey", col_mollusc1,col_mollusc2)
+```
+
+
+```{r}
+b1=piechart_diet(res_G0_emb_juin$`med %abun`)+ ggtitle("G0 embouchure printemps")
+b3=piechart_diet(res_G0_che_juin$`med %abun`)+ ggtitle("G0 chenal printemps")
+b5=piechart_diet(res_G0_FN_juin$`med %abun`)+ ggtitle("G0 Fosse Nord printemps")
+b7=piechart_diet(res_G0_FS_juin$`med %abun`)+ ggtitle("G0 Fosse Sud printemps")
+
+b2=piechart_diet(res_G0_emb_oct$`med %abun`)+ ggtitle("G0 embouchure automne")
+b4=piechart_diet(res_G0_che_oct$`med %abun`)+ ggtitle("G0 chenal automne")
+b6=piechart_diet(res_G0_FN_oct$`med %abun`)+ ggtitle("G0 Fosse Nord automne")
+b8=piechart_diet(res_G0_FS_oct$`med %abun`)+ ggtitle("G0 Fosse Sud automne")
+
+b9=piechart_diet(res_G1_juin$`med %abun`)+ ggtitle("G1 printemps")
+b10=piechart_diet(res_G1_oct$`med %abun`)+ ggtitle("G1 automne")
+
+b11=piechart_diet(res_pie=res_G2$`med %abun`)+ ggtitle("G2 automne")
+
+png("Contenus_stomacaux_classes_age.jpeg",
+    width = 25, height = 50, units = "cm",res=720)
+grid.arrange(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,ncol=2,nrow=6,
+             layout_matrix = matrix(c(seq(1,10,by = 1),NA,11),ncol = 2, nrow=6,byrow = T))
+dev.off()
+```
+
+
+```{r}
+p1=piechart_diet(res_G0_che$`med %abun`) + ggtitle("Soles G0 Chenal")
+p2=piechart_diet(res_G0_emb$`med %abun`) + ggtitle("Soles G0 Embouchure")
+p3=piechart_diet(res_G0_FS$`med %abun`) + ggtitle("Soles G0 Fosse Sud")
+p4=piechart_diet(res_G0_FN$`med %abun`) + ggtitle("Soles G0 Fosse Nord")
+b2=piechart_diet(res_G1$`med %abun`)+ ggtitle("Tous les G1")
+b3=piechart_diet(res_G2$`med %abun`)+ ggtitle("Tous les G2")
+
+png("Contenus_stomacaux.jpeg",width = 30, height = 25, units = "cm",res=720)
+grid.arrange(p1,p2,p3,p4,b2,b3,ncol=2,nrow=3)
+dev.off()
+```
+
+

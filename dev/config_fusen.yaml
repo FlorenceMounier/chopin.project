@@ -5,10 +5,12 @@ flat_diet_study.Rmd:
   - R/distri_diet.R
   - R/get_res_diet.R
   - R/list_grp.R
+  - R/piechart_diet.R
   tests:
   - tests/testthat/test-list_grp.R
   - tests/testthat/test-distri_diet.R
   - tests/testthat/test-get_res_diet.R
+  - tests/testthat/test-piechart_diet.R
   vignettes: []
   inflate:
     flat_file: dev/flat_diet_study.Rmd
