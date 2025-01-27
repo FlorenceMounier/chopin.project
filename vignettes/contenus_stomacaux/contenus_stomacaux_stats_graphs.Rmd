@@ -42,7 +42,11 @@ Sectors:
 levels(stomac_soles$secteur)
 ```
 List of subdatasets of stomac content of interest:
-G0_CH, G0_EM, G0_FN, G0_FS, G1_CH, G1_EM, G1_FN, G1_FS, G2_FN, G2_EM
+
+"Chenal", "Embouchure", "Fosse Nord", "Fosse Sud", "Sole G0", 
+"Sole G0 printemps", "Sole G0 automne", "G0_CH", "G0_EM", "G0_FN", 
+"G0_FS", "Sole G1", "Sole G1 printemps", "Sole G1 automne", "G1_CH", 
+"G1_EM", "G1_FN", "G1_FS", "Sole G2", "G2_EM", "G2_FN"
 ```{r}
 list_grps = list_grp(stomac_soles)
 ```
@@ -302,5 +306,4 @@ png("Contenus_stomacaux.jpeg",width = 30, height = 25, units = "cm",res=720)
 grid.arrange(p1,p2,p3,p4,b2,b3,ncol=2,nrow=3)
 dev.off()
 ```
-
 

@@ -1,0 +1,63 @@
+---
+title: "Contenus stomacaux G0 publication"
+author: "Florence Mounier"
+date: "2025-01-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(chopin.project)
+```
+
+## Calcul des abondances relatives pour les G0 toutes zones et saison confondues
+```{r}
+list_grps <- list_grp(stomac_soles)
+stomach_G0 <- list_grps$`Sole G0`
+n_stomach_G0 <- length(levels(stomach_G0$`N.poissons`))
+
+res_G0 = get_res_diet(
+  main = "Sole G0",
+  grp = stomach_G0,
+  min_abond = 0.1,  min_occur = 0.1
+)
+```
+
+## Liste des espèces par taxon et couleurs graphiques associées
+```{r}
+especes = levels(as.factor(res_G0$`med %abun`$species))
+
+list_taxa = c()
+for(s in 1:length(especes)){
+  list_taxa = c(list_taxa, as.character(table_species$taxon[which(table_species$species==especes[s])]))
+}
+list_taxon = data.frame("species" = as.factor(especes), 
+                        "taxon" = as.factor(list_taxa))
+summary(list_taxon) # 4 Annelida, 4 Arthropoda, 1 Mollusca
+
+col_annelid2 = brewer.pal(n = 9, name = 'YlOrRd')[c(2,4,6,8)]
+# "#FFEDA0" "#FEB24C" "#FC4E2A" "#BD0026"
+col_arthro1 = brewer.pal(n = 9, name = 'Greens')[c(2, 4, 6, 8)]
+# "#E5F5E0" "#A1D99B" "#41AB5D" "#006D2C" 
+col_mollusc2 = brewer.pal(n = 9, name = 'Blues')[6]
+# "#4292C6" 
+
+list_taxon = list_taxon[order(list_taxon$taxon),]
+list_taxon$col_species = c(col_annelid2,col_arthro1,col_mollusc2)
+```
+
+## Diet pie chart
+
+```{r}
+piechat_diet_G0 <- piechart_diet(res_G0$`med %abun`) + 
+  ggtitle(paste("G0 toutes zones et saison confondues (n=",n_stomach_G0, ")", sep = ""))
+
+piechat_diet_G0
+
+ggsave(plot = piechat_diet_G0, filename = "piechart_diet_G0.jpeg")
+```
+
