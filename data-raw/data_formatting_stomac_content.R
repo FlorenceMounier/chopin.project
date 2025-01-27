@@ -38,12 +38,23 @@ stomac_soles = stomac_soles[-which(stomac_soles$Statut=="déchet"|
 stomac_soles$`Nbr total tractus` = as.numeric(stomac_soles$`Nbr total tractus`)
 stomac_soles$ScientificName_accepted = as.factor(stomac_soles$ScientificName_accepted)
 stomac_soles$`espèce/stade` = as.factor(stomac_soles$`espèce/stade`)
-stomac_soles$`N°poissons` = as.factor(stomac_soles$`N°poissons`)
+stomac_soles$`N.poissons` = as.factor(stomac_soles$`N°poissons`)
 stomac_soles$secteur = as.factor(stomac_soles$secteur)
 stomac_soles = data.frame(stomac_soles)
+
+# Table of species names and corresponding taxa
+
+table_species = levels(stomac_soles$ScientificName_accepted)
+vect_taxon = c()
+for(s in 1:length(levels(stomac_soles$ScientificName_accepted))){
+  vect_taxon = c(vect_taxon, stomac_soles$Groupe.faunistique[which(stomac_soles$ScientificName_accepted==levels(stomac_soles$ScientificName_accepted)[s])][1])
+}
+
+table_species = data.frame("species"=table_species, "taxon"=vect_taxon)
 
 # Output data
 
 usethis::use_data(stomacG0G1, overwrite = TRUE)
 usethis::use_data(stomacG2, overwrite = TRUE)
 usethis::use_data(stomac_soles, overwrite = TRUE)
+usethis::use_data(table_species, overwrite = TRUE)
