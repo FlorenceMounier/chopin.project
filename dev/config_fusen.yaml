@@ -1,3 +1,45 @@
+flat_diet_study.Rmd:
+  path: dev/flat_diet_study.Rmd
+  state: active
+  R:
+  - R/distri_diet.R
+  - R/get_res_diet.R
+  - R/list_grp.R
+  tests:
+  - tests/testthat/test-list_grp.R
+  - tests/testthat/test-distri_diet.R
+  - tests/testthat/test-get_res_diet.R
+  vignettes: []
+  inflate:
+    flat_file: dev/flat_diet_study.Rmd
+    vignette_name: .na
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
+    clean: ask
+    codecov: false
+flat_distri_diet.Rmd:
+  path: dev/flat_distri_diet.Rmd
+  state: active
+  R:
+  - R/distri_diet.R
+  - R/get_res_diet.R
+  - R/list_grp.R
+  tests:
+  - tests/testthat/test-list_grp.R
+  - tests/testthat/test-distri_diet.R
+  - tests/testthat/test-get_res_diet.R
+  vignettes: []
+  inflate:
+    flat_file: dev/flat_distri_diet.Rmd
+    vignette_name: .na
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
+    clean: ask
+    codecov: false
 flat_graph_group_zone_saison.Rmd:
   path: dev/flat_graph_group_zone_saison.Rmd
   state: active

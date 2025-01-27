@@ -1,0 +1,215 @@
+---
+title: "flat_diet_study.Rmd"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+
+# list_grp
+    
+```{r development-list_grp}
+# You can prepare the code of the list_grp() function here
+```
+  
+```{r function-list_grp}
+#' Create subdatasets of stomach content data depending on sole age and sector.
+#' 
+#' Description
+#' 
+#' @param dataset Raw data stomach content with number of a given prey (ScientificName_accepted) in all the tractus (Nbr.total.tractus) for related tag fish (N.poissons). Studied columns are 'espèce.stade' and 'secteur'.
+#'
+#' @return a list of stomach content subdatasets of interest: G0_CH, G0_EM, G0_FN, G0_FS, G1_CH, G1_EM, G1_FN, G1_FS, G2_FN, G2_EM
+#' 
+#' @export
+
+list_grp = function(dataset){
+  G0_CH = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Chenal"),]
+  G0_EM = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Embouchure"),]
+  G0_FN = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Fosse Nord"),]
+  G0_FS = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Fosse Sud"),]
+
+  G1_CH = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Chenal"),]
+  G1_EM = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Embouchure"),]
+  G1_FN = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Fosse Nord"),]
+  G1_FS = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Fosse Sud"),]
+
+  G2_FN = dataset[which(dataset$espèce.stade=="Sole G2"& dataset$secteur=="Fosse Nord"),]
+  G2_EM = dataset[which(dataset$espèce.stade=="Sole G2"& dataset$secteur=="Octeville"),]
+
+  list("G0_CH"=G0_CH, "G0_EM"=G0_EM,"G0_FN"=G0_FN,"G0_FS"=G0_FS,
+                   "G1_CH"=G1_CH, "G1_EM"=G1_EM,"G1_FN"=G1_FN,"G1_FS"=G1_FS,
+                   "G2_EM"=G2_EM,"G2_FN"=G2_FN)
+}
+```
+  
+```{r example-list_grp}
+library(chopin.project)
+list_grps = list_grp(stomac_soles)
+```
+  
+```{r tests-list_grp}
+test_that("list_grp works", {
+  expect_true(inherits(list_grp, "function")) 
+})
+```
+  
+
+#########################################################################
+
+# distri_diet
+
+```{r development-distri_diet}
+# Prepare the code of your function here
+```
+
+```{r function-distri_diet}
+#' distri_diet Title
+#'
+#' @param data_stomac Raw data stomach content with number of a given prey (ScientificName_accepted) in all the tractus (Nbr.total.tractus) for related tag fish (N.poissons)
+#'
+#' @return Matrix of proportion of each prey compared to the total number of preys in each fish tag
+#' @export
+#'
+#' @examples
+distri_diet = function(data_stomac){
+
+  # List of fish sampled tags
+  fish_samp = names(which(table(data_stomac$N.poissons)!=0))
+  
+  # List of prey names
+  preys = levels(data_stomac$ScientificName_accepted)
+
+  # Empty matrix with preys in rows and fish tag in columns
+  diets = matrix(NA, nrow = length(preys), ncol=length(fish_samp))
+  rownames(diets) = preys
+
+  # For each fish tag
+  for(f in 1:length(fish_samp)){
+
+    # Get the total sum of number prey in each fish tag tractus
+    abundance_tot = sum( data_stomac[data_stomac$N.poissons==fish_samp[f],]$Nbr.total.tractus, na.rm=T)
+
+    # Get the proportion of each given prey in the total number of preys in each fish tag tractus (Get the total number of each type of prey for each fish tag, divided by the total number of preys in the tractus of this given fish)
+    for(p in data_stomac[data_stomac$N.poissons==fish_samp[f],]$ScientificName_accepted){
+      diets[which(rownames(diets)==p),f] = sum(data_stomac[data_stomac$N.poissons==fish_samp[f]&
+                                                             data_stomac$ScientificName_accepted==p,]$Nbr.total.tractus,na.rm=T) / abundance_tot
+    }}
+
+  as.data.frame(diets)
+ colnames(diets) <- fish_samp
+ 
+ diets
+}
+```
+
+```{r examples-distri_diet}
+library(chopin.project)
+distri_diet(stomac_soles)
+```
+
+```{r tests-distri_diet}
+test_that("distri_diet works", {
+  expect_true(inherits(distri_diet, "function"))
+})
+```
+
+############################################################################
+
+# get_res_diet
+    
+```{r development-get_res_diet}
+# You can prepare the code of the get_res_diet() function here
+```
+  
+```{r function-get_res_diet}
+#' Pie of stomach content with proportions of each major prey
+#' 
+#' Description
+#' 
+#' @param main Legend for the group of soles studied
+#' @param grp Raw data stomach content with number of a given prey (ScientificName_accepted) in all the tractus (Nbr.total.tractus) for related tag fish (N.poissons)
+#' @param min_occur Minimal occurence of preys in tractus considered in the plot (0-1)
+#' @param min_abond Minimal abondance of preys in tractus considered in the plot (0-1)
+#'
+#' @return Pie graph
+#' 
+#' @export
+get_res_diet = function(main, grp, min_occur, min_abond){
+
+
+  res_distri_diet = distri_diet(data_stomac = grp)
+
+  # Taux d'occurence: #soles dans lesquelles la proie a ?t? retrouv?e
+  occ = c()
+  for(l in 1:dim(res_distri_diet)[1]){
+    occ=c(occ, length(na.omit(res_distri_diet[l,])))
+  }
+  occ = occ/dim(res_distri_diet)[2]
+
+  # M?diane des #proie/#total tractus dans les estomacs des soles dans lequelles la proie a ?t? retrouv?e
+  min_abun = med_abun = max_abun = c()
+  for(l in 1:dim(res_distri_diet)[1]){
+    min_abun=c(min_abun, ifelse(occ[l]==0, yes = 0, no = min(na.omit(res_distri_diet[l,]))))
+    med_abun=c(med_abun, ifelse(occ[l]==0, yes = 0, no = median(na.omit(res_distri_diet[l,]))))
+    max_abun=c(max_abun, ifelse(occ[l]==0, yes = 0, no = max(na.omit(res_distri_diet[l,]))))
+  }
+
+  par(mar=c(1,4,3,2))
+
+  pie(main = paste("Normalised %abundance for ", main,"\n for species with %abundance >",min_abond*100,"% and %occurance >",min_occur*100,"%", sep=""),
+      med_abun[-which(med_abun<min_abond|occ<min_occur)]/
+        sum(med_abun[-which(med_abun<min_abond|occ<min_occur)]),
+      labels = rownames(res_distri_diet)[-which(med_abun<min_abond|occ<min_occur)]
+      )
+
+  res_pie = round((med_abun[-which(med_abun<min_abond|occ<min_occur)]/
+          sum(med_abun[-which(med_abun<min_abond|occ<min_occur)]))*100,digits = 3)
+  res_pie = data.frame("taxon" = table_species$taxon[-which(med_abun<min_abond|occ<min_occur)],
+                       "species" = rownames(res_distri_diet)[-which(med_abun<min_abond|occ<min_occur)],
+                       "tx.abun" = res_pie)
+
+  res = cbind("%occ"=round(occ*100,digits = 3),
+              "min %abun"=round(min_abun*100,digits = 3),
+              "med %abun"=round(med_abun*100,digits = 3),
+              "max %abun"=round(max_abun*100,digits = 3))
+
+  rownames(res) = rownames(res_distri_diet)
+
+res_pie$species = factor(res_pie$species, levels = levels(res_pie$species)[order(res_pie$taxon)],
+                         labels = levels(res_pie$species)[order(res_pie$taxon)])
+
+  list("res"=res,
+       "med %abun"=data.frame(res_pie))
+}
+```
+  
+```{r example-get_res_diet}
+library(chopin.project)
+res_all_soles = get_res_diet(main = "ALL SOLES", grp=stomac_soles, min_abond =0.1, min_occur = 0.1)
+```
+  
+```{r tests-get_res_diet}
+test_that("get_res_diet works", {
+  expect_true(inherits(get_res_diet, "function")) 
+})
+```
+  
+
+############################################################################
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_diet_study.Rmd", vignette_name = NA)
+```
+
