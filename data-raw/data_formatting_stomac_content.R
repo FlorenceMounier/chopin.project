@@ -35,6 +35,13 @@ stomac_soles = stomac_soles[-which(stomac_soles$Statut=="déchet"|
                                      stomac_soles$ScientificName_accepted=="Pleuronectes platessa_écailles"|
                                      stomac_soles$ScientificName_accepted=="Actinopterygii_écaille"),]
 
+stomac_soles$`Nbr total tractus` = as.numeric(stomac_soles$`Nbr total tractus`)
+stomac_soles$ScientificName_accepted = as.factor(stomac_soles$ScientificName_accepted)
+stomac_soles$`espèce/stade` = as.factor(stomac_soles$`espèce/stade`)
+stomac_soles$`N°poissons` = as.factor(stomac_soles$`N°poissons`)
+stomac_soles$secteur = as.factor(stomac_soles$secteur)
+stomac_soles = data.frame(stomac_soles)
+
 # Output data
 
 usethis::use_data(stomacG0G1, overwrite = TRUE)
