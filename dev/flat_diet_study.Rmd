@@ -146,17 +146,28 @@ test_that("distri_diet works", {
 #' @export
 get_res_diet = function(main, grp, min_occur, min_abond){
 
+<<<<<<< HEAD
   # Get proportion of prey species in each studied fish
   res_distri_diet = distri_diet(data_stomac = grp)
 
   # Taux d'occurence de chaque proie: #soles dans lesquelles la proie a été retrouvée
+=======
+
+  res_distri_diet = distri_diet(data_stomac = grp)
+
+  # Taux d'occurence: #soles dans lesquelles la proie a ?t? retrouv?e
+>>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   occ = c()
   for(l in 1:dim(res_distri_diet)[1]){
     occ=c(occ, length(na.omit(res_distri_diet[l,])))
   }
   occ = occ/dim(res_distri_diet)[2]
 
+<<<<<<< HEAD
   # Min, médiane et max des #proie/#total tractus dans les estomacs des soles dans lequelles la proie a été retrouvée
+=======
+  # M?diane des #proie/#total tractus dans les estomacs des soles dans lequelles la proie a ?t? retrouv?e
+>>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   min_abun = med_abun = max_abun = c()
   for(l in 1:dim(res_distri_diet)[1]){
     min_abun=c(min_abun, ifelse(occ[l]==0, yes = 0, no = min(na.omit(res_distri_diet[l,]))))
@@ -166,9 +177,13 @@ get_res_diet = function(main, grp, min_occur, min_abond){
 
   par(mar=c(1,4,3,2))
 
+<<<<<<< HEAD
   pie(main = paste("Normalised %abundance for ", main,
                    "\n for species with %abundance >",min_abond*100,
                    "% and %occurance >",min_occur*100,"%", sep=""),
+=======
+  pie(main = paste("Normalised %abundance for ", main,"\n for species with %abundance >",min_abond*100,"% and %occurance >",min_occur*100,"%", sep=""),
+>>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
       med_abun[-which(med_abun<min_abond|occ<min_occur)]/
         sum(med_abun[-which(med_abun<min_abond|occ<min_occur)]),
       labels = rownames(res_distri_diet)[-which(med_abun<min_abond|occ<min_occur)]
@@ -184,6 +199,7 @@ get_res_diet = function(main, grp, min_occur, min_abond){
               "min %abun"=round(min_abun*100,digits = 3),
               "med %abun"=round(med_abun*100,digits = 3),
               "max %abun"=round(max_abun*100,digits = 3))
+<<<<<<< HEAD
   rownames(res) = rownames(res_distri_diet)
 
   res_pie$species = as.factor(res_pie$species)
@@ -193,6 +209,14 @@ get_res_diet = function(main, grp, min_occur, min_abond){
     labels = levels(res_pie$species)[order(res_pie$taxon)]
   )
   
+=======
+
+  rownames(res) = rownames(res_distri_diet)
+
+res_pie$species = factor(res_pie$species, levels = levels(res_pie$species)[order(res_pie$taxon)],
+                         labels = levels(res_pie$species)[order(res_pie$taxon)])
+
+>>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   list("res"=res,
        "med %abun"=data.frame(res_pie))
 }
@@ -208,6 +232,7 @@ test_that("get_res_diet works", {
   expect_true(inherits(get_res_diet, "function")) 
 })
 ```
+<<<<<<< HEAD
 
 # piechart_diet
     
@@ -283,6 +308,8 @@ test_that("piechart_diet works", {
   expect_true(inherits(piechart_diet, "function")) 
 })
 ```
+=======
+>>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   
 
 ############################################################################
@@ -292,3 +319,7 @@ test_that("piechart_diet works", {
 # Execute in the console directly
 fusen::inflate(flat_file = "dev/flat_diet_study.Rmd", vignette_name = NA)
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
