@@ -14,20 +14,36 @@
 #' list_grps = list_grp(stomac_soles)
 
 list_grp = function(dataset){
-  G0_CH = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Chenal"),]
-  G0_EM = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Embouchure"),]
-  G0_FN = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Fosse Nord"),]
-  G0_FS = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Fosse Sud"),]
+  
+  CH = dataset[which(dataset$secteur=="Chenal"),]
+  EM = dataset[which(dataset$secteur=="Embouchure"),]
+  FN = dataset[which(dataset$secteur=="Fosse Nord"),]
+  FS = dataset[which(dataset$secteur=="Fosse Sud"),]
 
-  G1_CH = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Chenal"),]
-  G1_EM = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Embouchure"),]
-  G1_FN = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Fosse Nord"),]
-  G1_FS = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Fosse Sud"),]
+  G0 = dataset[which(dataset$espèce.stade=="Sole G0"),]
+  G0_juin = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$Campagne=="Print-17"),]
+  G0_oct = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$Campagne=="Aut-17"),]
+  G0_CH = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Chenal"),]
+  G0_EM = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Embouchure"),]
+  G0_FN = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Fosse Nord"),]
+  G0_FS = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Fosse Sud"),]
 
-  G2_FN = dataset[which(dataset$espèce.stade=="Sole G2"& dataset$secteur=="Fosse Nord"),]
-  G2_EM = dataset[which(dataset$espèce.stade=="Sole G2"& dataset$secteur=="Octeville"),]
+  G1 = dataset[which(dataset$espèce.stade=="Sole G1"),]
+  G1_juin = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$Campagne=="Print-17"),]
+  G1_oct = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$Campagne=="Aut-17"),]
+  G1_CH = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Chenal"),]
+  G1_EM = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Embouchure"),]
+  G1_FN = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Fosse Nord"),]
+  G1_FS = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Fosse Sud"),]
 
-  list("G0_CH"=G0_CH, "G0_EM"=G0_EM,"G0_FN"=G0_FN,"G0_FS"=G0_FS,
-                   "G1_CH"=G1_CH, "G1_EM"=G1_EM,"G1_FN"=G1_FN,"G1_FS"=G1_FS,
-                   "G2_EM"=G2_EM,"G2_FN"=G2_FN)
+  G2 = dataset[which(dataset$espèce.stade=="Sole G2"),]
+  G2_FN = dataset[which(dataset$espèce.stade=="Sole G2" & dataset$secteur=="Fosse Nord"),]
+  G2_EM = dataset[which(dataset$espèce.stade=="Sole G2" & dataset$secteur=="Octeville"),]
+
+  list("Chenal"=CH, "Embouchure"=EM, "Fosse Nord"=FN, "Fosse Sud"=FS, 
+       "Sole G0"=G0, "Sole G0 printemps"=G0_juin, "Sole G0 automne"=G0_oct,
+       "G0_CH"=G0_CH, "G0_EM"=G0_EM,"G0_FN"=G0_FN,"G0_FS"=G0_FS,
+       "Sole G1"=G1, "Sole G1 printemps"=G1_juin, "Sole G1 automne"=G1_oct,
+       "G1_CH"=G1_CH, "G1_EM"=G1_EM,"G1_FN"=G1_FN,"G1_FS"=G1_FS,
+       "Sole G2"=G2, "G2_EM"=G2_EM,"G2_FN"=G2_FN)
 }

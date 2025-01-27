@@ -18,11 +18,11 @@ library(scales)
 
 ```{r}
 summary(as.factor(stomac_soles$Statut))
-
 summary(as.factor(stomac_soles$N.poissons))
 summary(as.factor(stomac_soles$espèce.stade))
 summary(as.factor(stomac_soles$secteur))
 ```
+
 ```{r}
 levels(stomac_soles$`espèce.stade`)
 ```
@@ -30,9 +30,9 @@ levels(stomac_soles$`espèce.stade`)
 Prey species names:
 ```{r}
 levels(stomac_soles$ScientificName_accepted)
+ordered_alphab_preys = table(stomac_soles$ScientificName_accepted)
+ordered_occur_preys = summary(stomac_soles$ScientificName_accepted)
 ```
-
-
 Number of fish:
 ```{r}
 length(levels(stomac_soles$`N.poissons`))
@@ -47,71 +47,74 @@ G0_CH, G0_EM, G0_FN, G0_FS, G1_CH, G1_EM, G1_FN, G1_FS, G2_FN, G2_EM
 list_grps = list_grp(stomac_soles)
 ```
 
+
 ## Stomach content for different sub datasets of soles
 
 Pie charts + table of values
 ```{r}
+min_abundance = 0.1
+min_occurrence = 0.1
+
 res_all_soles = get_res_diet(
   main = "ALL SOLES",
   grp = stomac_soles,
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 res_G0 = get_res_diet(
   main = "Sole G0",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G0"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G1 = get_res_diet(
   main = "Sole G1",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G1"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G2 = get_res_diet(
   main = "Sole G2",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G2"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
-
 
 res_G0_juin = get_res_diet(
   main = "Sole G0 printemps",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G0" &
                              stomac_soles$Campagne == "Print-17"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_oct = get_res_diet(
   main = "Sole G0 automne",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G0" &
                              stomac_soles$Campagne == "Aut-17"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 res_G1_juin = get_res_diet(
   main = "Sole G1 printemps",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G1" &
                              stomac_soles$Campagne == "Print-17"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G1_oct = get_res_diet(
   main = "Sole G1 automne",
   grp = stomac_soles[which(stomac_soles$espèce.stade == "Sole G1" &
                              stomac_soles$Campagne == "Aut-17"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 
 res_che = get_res_diet(
   main = "Chenal",
   grp = stomac_soles[which(stomac_soles$secteur == "Chenal"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_che = get_res_diet(
   main = "G0 Chenal",
   grp = stomac_soles[which(stomac_soles$secteur == "Chenal" &
                              stomac_soles$espèce.stade ==
                              "Sole G0"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_che_juin = get_res_diet(
   main = "G0 Chenal printemps",
@@ -120,7 +123,7 @@ res_G0_che_juin = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Print-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_che_oct = get_res_diet(
   main = "G0 Chenal automne",
@@ -129,20 +132,20 @@ res_G0_che_oct = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Aut-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 
 res_emb = get_res_diet(
   main = "Embouchure",
   grp = stomac_soles[which(stomac_soles$secteur == "Embouchure"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_emb = get_res_diet(
   main = "G0 Embouchure",
   grp = stomac_soles[which(stomac_soles$secteur == "Embouchure" &
                              stomac_soles$espèce.stade == "Sole G0"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_emb_juin = get_res_diet(
   main = "G0 Embouchure printemps",
@@ -151,7 +154,7 @@ res_G0_emb_juin = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Print-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_emb_oct = get_res_diet(
   main = "G0 Embouchure automne",
@@ -160,20 +163,20 @@ res_G0_emb_oct = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Aut-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 
 res_FS = get_res_diet(
   main = "Fosse Sud",
   grp = stomac_soles[which(stomac_soles$secteur == "Fosse Sud"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_FS = get_res_diet(
   main = "G0 Fosse Sud",
   grp = stomac_soles[which(stomac_soles$secteur == "Fosse Sud" &
                              stomac_soles$espèce.stade == "Sole G0"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_FS_juin = get_res_diet(
   main = "G0 Fosse Sud printemps",
@@ -182,7 +185,7 @@ res_G0_FS_juin = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Print-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_FS_oct = get_res_diet(
   main = "G0 Fosse Sud automne",
@@ -191,20 +194,20 @@ res_G0_FS_oct = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Aut-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 
 res_FN = get_res_diet(
   main = "Fosse Nord",
   grp = stomac_soles[which(stomac_soles$secteur == "Fosse Nord"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_FN = get_res_diet(
   main = "G0 Fosse Nord",
   grp = stomac_soles[which(stomac_soles$secteur == "Fosse Nord" &
                              stomac_soles$espèce.stade == "Sole G0"), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_FN_juin = get_res_diet(
   main = "G0 Fosse Nord printemps",
@@ -213,7 +216,7 @@ res_G0_FN_juin = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Print-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 res_G0_FN_oct = get_res_diet(
   main = "G0 Fosse Nord automne",
@@ -222,7 +225,7 @@ res_G0_FN_oct = get_res_diet(
       stomac_soles$espèce.stade == "Sole G0" &
       stomac_soles$Campagne == "Aut-17"
   ), ],
-  min_abond = 0.1,  min_occur = 0.1
+  min_abond = min_abundance,  min_occur = min_occurrence
 )
 
 ALL_res = list(res_G0_che_juin$`med %abun`, res_G0_che_oct$`med %abun`,

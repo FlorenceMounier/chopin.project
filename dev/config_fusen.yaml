@@ -2,11 +2,15 @@ flat_diet_study.Rmd:
   path: dev/flat_diet_study.Rmd
   state: active
   R:
+  - R/abundance.R
   - R/distri_diet.R
   - R/get_res_diet.R
   - R/list_grp.R
+  - R/occurence.R
   - R/piechart_diet.R
   tests:
+  - tests/testthat/test-abundance.R
+  - tests/testthat/test-occurence.R
   - tests/testthat/test-list_grp.R
   - tests/testthat/test-distri_diet.R
   - tests/testthat/test-get_res_diet.R

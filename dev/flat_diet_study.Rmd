@@ -14,6 +14,172 @@ library(testthat)
 pkgload::load_all(export_all = FALSE)
 ```
 
+#-----------------------------------------------------------------------
+
+# abundance
+    
+```{r development-abundance}
+# You can prepare the code of the abundance() function here
+```
+  
+```{r function-abundance}
+#' Total abundance (number of individuals) of each prey species in a stomac content dataset
+#' 
+#' @param data_stomac Raw data stomach content with number of a given prey (ScientificName_accepted) in all the tractus (Nbr.total.tractus) for related tag fish (N.poissons).
+#' @param min_abundance Minimal number of individual found in all tractus to consider the species
+#' @param quantile_abundance Minimal quantil in all tractus to consider the species
+#' @param proportion_abundance Minimal proportion of individual found in all tractus to consider the species
+#'
+#' @return dataframe Prey species, Total number of preys
+#' 
+#' @export
+abundance = function(data_stomac, min_abundance, quantile_abundance, proportion_abundance){
+  
+  res_abundance = c()
+  for(s in levels(data_stomac$ScientificName_accepted) ){
+    tmp = data_stomac$Nbr.total.tractus[which(data_stomac$ScientificName_accepted==s)]
+    res_abundance = c(res_abundance,
+                      ifelse(class(tmp)=="character", yes = NA, no = sum(tmp)))
+  }
+  return_abundance = data.frame("species" = levels(data_stomac$ScientificName_accepted), 
+                             "abundance" = res_abundance)
+
+# Abondance > N
+
+  par(mar=c(9,4,4,1))
+  barplot(
+    main = paste(
+      ifelse(
+        test = max(summary(data_stomac$espèce.stade)) == dim(data_stomac)[1],
+        yes = paste(data_stomac$espèce.stade[1]),
+        no = "Soles"
+      ),
+      ifelse(
+        test = max(summary(data_stomac$secteur)) == dim(data_stomac)[1],
+        yes = paste(data_stomac$secteur[1]),
+        no = ""
+      ), "abundance N>", paste(min_abundance)
+    ),
+    return_abundance$abundance[-which(return_abundance$abundance <= min_abundance)],
+    names = return_abundance[-which(return_abundance$abundance <= min_abundance), 1],
+    las = 2,
+    cex.axis = 0.8
+  )
+  
+# Abondance > quantile
+  
+  par(mar=c(9,4,4,1))
+  barplot(
+    main = paste(
+      ifelse(
+        test = max(summary(data_stomac$espèce.stade)) == dim(data_stomac)[1],
+        yes = paste(data_stomac$espèce.stade[1]),
+        no = "Soles"
+      ),
+      ifelse(
+        test = max(summary(data_stomac$secteur)) == dim(data_stomac)[1],
+        yes = paste(data_stomac$secteur[1]),
+        no = ""
+      ), "abundance quantile", paste(quantile_abundance)
+    ),
+    return_abundance[which(return_abundance$abundance > quantile(return_abundance$abundance, 
+                                                                 probs = quantile_abundance, na.rm = T)), 2],
+    names = return_abundance[which(return_abundance$abundance > quantile(return_abundance$abundance, 
+                                                                         probs = quantile_abundance, na.rm = T)), 1],
+    las = 2,
+    cex.axis = 0.8
+  )
+  
+# Abondance normalisée
+  return_abundance$norm_abundance <-return_abundance$abundance/sum(return_abundance$abundance,na.rm=T)*100
+
+  par(mar=c(9,4,4,1))
+   barplot(
+    main = paste(
+      ifelse(
+        test = max(summary(data_stomac$espèce.stade)) == dim(data_stomac)[1],
+        yes = paste(data_stomac$espèce.stade[1]),
+        no = "Soles"
+      ),
+      ifelse(
+        test = max(summary(data_stomac$secteur)) == dim(data_stomac)[1],
+        yes = paste(data_stomac$secteur[1]),
+        no = ""
+      ), "abundance proportion >", paste(proportion_abundance*100, "%")
+    ),
+    return_abundance$norm_abundance[-which(return_abundance$norm_abundance <= proportion_abundance)],
+    names = return_abundance$species[-which(return_abundance$norm_abundance <= proportion_abundance)],
+    las = 2,
+    cex.axis = 0.8
+  )
+  
+  par(mar=c(2,1,4,1))
+  pie( main=paste("Abundance (>",percent_abond,"% tot preys)",
+                  ifelse(test = max(summary(data_stomac$espèce.stade))==dim(data_stomac)[1], 
+                         yes = paste(data_stomac$espèce.stade[1]), no = "Soles"),
+       ifelse(test = max(summary(data_stomac$secteur))==dim(data_stomac)[1], yes=paste(data_stomac$secteur[1]), no="")),
+       return_abundance$norm_abundance[which(return_abundance$norm_abundance > proportion_abundance)],
+      labels=return_abundance[which(return_abundance$norm_abundance > proportion_abundance),1])
+  
+  return(return_abundance)
+  #res_abundance[which(res_abundance$abundance>50),]
+}
+```
+  
+```{r example-abundance}
+library(chopin.project)
+abundance(data_stomac = stomac_soles, min_abundance = 5, quantile_abundance = 0.95, proportion_abundance = 0.95)
+```
+  
+```{r tests-abundance}
+test_that("abundance works", {
+  expect_true(inherits(abundance, "function")) 
+})
+```
+
+#-----------------------------------------------------------------------
+
+# occurence
+    
+```{r development-occurence}
+# You can prepare the code of the occurence() function here
+```
+  
+```{r function-occurence}
+#' Occurrence (%number over number of all preys) of each prey species in a stomac content dataset
+#' 
+#' @param data_stomac Raw data stomach content with number of a given prey (ScientificName_accepted) in all the tractus (Nbr.total.tractus) for related tag fish (N.poissons).
+#'
+#' @return dataframe Prey species, Total proportion in all tractus
+#' 
+#' @export
+occurence = function(data_stomac){
+  
+  res_occurence = c()
+  for(s in levels(data_stomac$ScientificName_accepted) ){
+    res_occurence = c(res_occurence,
+                      length(data_stomac[which(data_stomac$ScientificName_accepted==s),]$N.poissons))
+  }
+  res_occurence = res_occurence/length(table(data_stomac$N.poissons)[which(table(data_stomac$N.poissons)!=0)])*100
+  res_occurence = data.frame(levels(data_stomac$ScientificName_accepted), res_occurence)
+  
+  return(res_occurence)
+}
+```
+  
+```{r example-occurence}
+library(chopin.project)
+occurence(stomac_soles)
+```
+  
+```{r tests-occurence}
+test_that("occurence works", {
+  expect_true(inherits(occurence, "function")) 
+})
+```
+  
+
+#-----------------------------------------------------------------------
 
 # list_grp
     
@@ -33,22 +199,38 @@ pkgload::load_all(export_all = FALSE)
 #' @export
 
 list_grp = function(dataset){
-  G0_CH = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Chenal"),]
-  G0_EM = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Embouchure"),]
-  G0_FN = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Fosse Nord"),]
-  G0_FS = dataset[which(dataset$espèce.stade=="Sole G0"& dataset$secteur=="Fosse Sud"),]
+  
+  CH = dataset[which(dataset$secteur=="Chenal"),]
+  EM = dataset[which(dataset$secteur=="Embouchure"),]
+  FN = dataset[which(dataset$secteur=="Fosse Nord"),]
+  FS = dataset[which(dataset$secteur=="Fosse Sud"),]
 
-  G1_CH = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Chenal"),]
-  G1_EM = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Embouchure"),]
-  G1_FN = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Fosse Nord"),]
-  G1_FS = dataset[which(dataset$espèce.stade=="Sole G1"& dataset$secteur=="Fosse Sud"),]
+  G0 = dataset[which(dataset$espèce.stade=="Sole G0"),]
+  G0_juin = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$Campagne=="Print-17"),]
+  G0_oct = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$Campagne=="Aut-17"),]
+  G0_CH = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Chenal"),]
+  G0_EM = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Embouchure"),]
+  G0_FN = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Fosse Nord"),]
+  G0_FS = dataset[which(dataset$espèce.stade=="Sole G0" & dataset$secteur=="Fosse Sud"),]
 
-  G2_FN = dataset[which(dataset$espèce.stade=="Sole G2"& dataset$secteur=="Fosse Nord"),]
-  G2_EM = dataset[which(dataset$espèce.stade=="Sole G2"& dataset$secteur=="Octeville"),]
+  G1 = dataset[which(dataset$espèce.stade=="Sole G1"),]
+  G1_juin = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$Campagne=="Print-17"),]
+  G1_oct = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$Campagne=="Aut-17"),]
+  G1_CH = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Chenal"),]
+  G1_EM = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Embouchure"),]
+  G1_FN = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Fosse Nord"),]
+  G1_FS = dataset[which(dataset$espèce.stade=="Sole G1" & dataset$secteur=="Fosse Sud"),]
 
-  list("G0_CH"=G0_CH, "G0_EM"=G0_EM,"G0_FN"=G0_FN,"G0_FS"=G0_FS,
-                   "G1_CH"=G1_CH, "G1_EM"=G1_EM,"G1_FN"=G1_FN,"G1_FS"=G1_FS,
-                   "G2_EM"=G2_EM,"G2_FN"=G2_FN)
+  G2 = dataset[which(dataset$espèce.stade=="Sole G2"),]
+  G2_FN = dataset[which(dataset$espèce.stade=="Sole G2" & dataset$secteur=="Fosse Nord"),]
+  G2_EM = dataset[which(dataset$espèce.stade=="Sole G2" & dataset$secteur=="Octeville"),]
+
+  list("Chenal"=CH, "Embouchure"=EM, "Fosse Nord"=FN, "Fosse Sud"=FS, 
+       "Sole G0"=G0, "Sole G0 printemps"=G0_juin, "Sole G0 automne"=G0_oct,
+       "G0_CH"=G0_CH, "G0_EM"=G0_EM,"G0_FN"=G0_FN,"G0_FS"=G0_FS,
+       "Sole G1"=G1, "Sole G1 printemps"=G1_juin, "Sole G1 automne"=G1_oct,
+       "G1_CH"=G1_CH, "G1_EM"=G1_EM,"G1_FN"=G1_FN,"G1_FS"=G1_FS,
+       "Sole G2"=G2, "G2_EM"=G2_EM,"G2_FN"=G2_FN)
 }
 ```
   
@@ -64,7 +246,7 @@ test_that("list_grp works", {
 ```
   
 
-#########################################################################
+#-----------------------------------------------------------------------
 
 # distri_diet
 
@@ -123,7 +305,7 @@ test_that("distri_diet works", {
 })
 ```
 
-############################################################################
+#-----------------------------------------------------------------------
 
 # get_res_diet
     
@@ -146,28 +328,18 @@ test_that("distri_diet works", {
 #' @export
 get_res_diet = function(main, grp, min_occur, min_abond){
 
-<<<<<<< HEAD
   # Get proportion of prey species in each studied fish
   res_distri_diet = distri_diet(data_stomac = grp)
 
   # Taux d'occurence de chaque proie: #soles dans lesquelles la proie a été retrouvée
-=======
-
-  res_distri_diet = distri_diet(data_stomac = grp)
-
-  # Taux d'occurence: #soles dans lesquelles la proie a ?t? retrouv?e
->>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   occ = c()
   for(l in 1:dim(res_distri_diet)[1]){
     occ=c(occ, length(na.omit(res_distri_diet[l,])))
   }
   occ = occ/dim(res_distri_diet)[2]
 
-<<<<<<< HEAD
+
   # Min, médiane et max des #proie/#total tractus dans les estomacs des soles dans lequelles la proie a été retrouvée
-=======
-  # M?diane des #proie/#total tractus dans les estomacs des soles dans lequelles la proie a ?t? retrouv?e
->>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   min_abun = med_abun = max_abun = c()
   for(l in 1:dim(res_distri_diet)[1]){
     min_abun=c(min_abun, ifelse(occ[l]==0, yes = 0, no = min(na.omit(res_distri_diet[l,]))))
@@ -177,13 +349,9 @@ get_res_diet = function(main, grp, min_occur, min_abond){
 
   par(mar=c(1,4,3,2))
 
-<<<<<<< HEAD
   pie(main = paste("Normalised %abundance for ", main,
                    "\n for species with %abundance >",min_abond*100,
                    "% and %occurance >",min_occur*100,"%", sep=""),
-=======
-  pie(main = paste("Normalised %abundance for ", main,"\n for species with %abundance >",min_abond*100,"% and %occurance >",min_occur*100,"%", sep=""),
->>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
       med_abun[-which(med_abun<min_abond|occ<min_occur)]/
         sum(med_abun[-which(med_abun<min_abond|occ<min_occur)]),
       labels = rownames(res_distri_diet)[-which(med_abun<min_abond|occ<min_occur)]
@@ -199,7 +367,7 @@ get_res_diet = function(main, grp, min_occur, min_abond){
               "min %abun"=round(min_abun*100,digits = 3),
               "med %abun"=round(med_abun*100,digits = 3),
               "max %abun"=round(max_abun*100,digits = 3))
-<<<<<<< HEAD
+
   rownames(res) = rownames(res_distri_diet)
 
   res_pie$species = as.factor(res_pie$species)
@@ -208,15 +376,7 @@ get_res_diet = function(main, grp, min_occur, min_abond){
     levels = levels(res_pie$species)[order(res_pie$taxon)],
     labels = levels(res_pie$species)[order(res_pie$taxon)]
   )
-  
-=======
 
-  rownames(res) = rownames(res_distri_diet)
-
-res_pie$species = factor(res_pie$species, levels = levels(res_pie$species)[order(res_pie$taxon)],
-                         labels = levels(res_pie$species)[order(res_pie$taxon)])
-
->>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
   list("res"=res,
        "med %abun"=data.frame(res_pie))
 }
@@ -232,7 +392,8 @@ test_that("get_res_diet works", {
   expect_true(inherits(get_res_diet, "function")) 
 })
 ```
-<<<<<<< HEAD
+
+#-----------------------------------------------------------------------
 
 # piechart_diet
     
@@ -308,18 +469,12 @@ test_that("piechart_diet works", {
   expect_true(inherits(piechart_diet, "function")) 
 })
 ```
-=======
->>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
-  
 
-############################################################################
+
+#-----------------------------------------------------------------------
 
 ```{r development-inflate, eval=FALSE}
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
 fusen::inflate(flat_file = "dev/flat_diet_study.Rmd", vignette_name = NA)
 ```
-<<<<<<< HEAD
-=======
-
->>>>>>> 26cf953e9c5d166be48d9e4ebcc2e11695ea78b2
